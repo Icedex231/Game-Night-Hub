@@ -52,16 +52,14 @@
         .custom-option:last-child { border-bottom: none; }
         .custom-option:hover { background: #333; color: white; }
         .custom-option.selected { color: #fff; background: var(--primary); }
-        
         .btn-add { background: var(--primary); color: white; border: none; width: 50px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; height: 42px; flex-shrink: 0; }
 
-        /* DESKTOP (3 Col) */
+        /* LAYOUTS */
         .desktop-view-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
         .cat-card { background: var(--glass); border: 1px solid #333; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; height: 500px; min-width: 0; }
         .cat-header { padding: 15px; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; white-space: nowrap; }
         .cat-header.steam { border-left: 4px solid var(--steam); } .cat-header.roblox { border-left: 4px solid var(--roblox); } .cat-header.web { border-left: 4px solid var(--web); }
 
-        /* MOBILE (1 List) */
         .mobile-view-container { display: none; flex-direction: column; }
         .library-card { background: var(--glass); border: 1px solid #333; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; height: 500px; }
         .library-header { padding: 15px 20px; background: rgba(0,0,0,0.2); border-bottom: 1px solid #333; color: var(--text-dim); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; }
@@ -75,16 +73,28 @@
         .cat-icon { width: 30px; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; }
         .icon-steam { color: var(--steam); } .icon-roblox { color: var(--roblox); } .icon-web { color: var(--web); }
 
-        /* FIXED CHECKBOXES */
-        .custom-check { width: 22px; height: 22px; border: 2px solid #4f545c; border-radius: 6px; display: grid; place-items: center; flex-shrink: 0; background: transparent; transition: 0.2s; }
-        .custom-check i { opacity: 0; transform: scale(0.5); transition: 0.2s; }
+        /* CHECKBOXES (EMPTY WHEN NOT SELECTED) */
+        .custom-check { 
+            width: 22px; height: 22px; border: 2px solid #4f545c; border-radius: 6px; 
+            display: grid; place-items: center; flex-shrink: 0; 
+            background: transparent; /* Empty */
+            transition: 0.2s;
+        }
+        .custom-check i { 
+            opacity: 0; /* Invisible */
+            transform: scale(0.5); transition: 0.2s; 
+        }
         input[type="checkbox"] { display: none; }
         input[type="checkbox"]:checked + .custom-check { background: var(--accent); border-color: var(--accent); color: #fff; }
         input[type="checkbox"]:checked + .custom-check i { opacity: 1; transform: scale(1); }
 
         .mode-list { display: flex; flex-wrap: wrap; gap: 6px; padding-left: 34px; }
         .mode-item { display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 4px; cursor: pointer; }
-        .mode-check { width: 14px; height: 14px; border: 1px solid #666; border-radius: 3px; display: grid; place-items: center; font-size: 9px; flex-shrink: 0; background: transparent; }
+        .mode-check { 
+            width: 14px; height: 14px; border: 1px solid #666; border-radius: 3px; 
+            display: grid; place-items: center; font-size: 9px; flex-shrink: 0; 
+            background: transparent; /* Empty */
+        }
         .mode-check i { opacity: 0; transition: 0.2s; }
         input[type="checkbox"]:checked + .mode-check { background: var(--primary); border-color: var(--primary); color: white; }
         input[type="checkbox"]:checked + .mode-check i { opacity: 1; }
@@ -92,22 +102,21 @@
 
         .delete-btn { background: none; border: none; color: var(--danger); opacity: 0.5; cursor: pointer; padding: 5px; font-size: 1rem; }
 
-        /* WHEEL SPACING FIX */
+        /* WHEEL & SPACING FIX */
         .section-wheel { position: sticky; top: 10px; background: #2f3136; padding: 25px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; border: 1px solid #333; z-index: 5; transform: translateZ(0); }
         .winner-box { margin-bottom: 60px; text-align: center; min-height: 80px; width: 100%; position: relative; z-index: 20; }
         .winner-label { color: var(--text-dim); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;}
         .winner-name { color: var(--accent); font-size: 1.8rem; font-weight: 800; margin: 0; line-height: 1.2; }
         .winner-mode { font-size: 0.9rem; color: #fff; background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 12px; margin-top: 8px; display: inline-block; border: 1px solid var(--accent); }
-        
         .wheel-container { position: relative; width: 100%; max-width: 320px; aspect-ratio: 1/1; margin-bottom: 25px; }
         canvas { width: 100%; height: 100%; border-radius: 50%; transition: transform 2.5s cubic-bezier(0.1, 0, 0.2, 1); will-change: transform; }
         .pointer { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 40px solid white; z-index: 10; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5)); }
         
         .spin-btn { background: var(--accent); color: white; border: none; padding: 15px 0; border-radius: 10px; font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; cursor: pointer; width: 100%; box-shadow: 0 4px 0 #2a7b56; text-transform: uppercase; }
         .spin-btn:active { transform: translateY(4px); box-shadow: none; }
-        .veto-btn { background: var(--warning); color: #000; border: none; padding: 10px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; cursor: pointer; margin-top: 15px; display: none; width: 100%; animation: popIn 0.3s ease; }
+        .veto-btn { background: var(--warning); color: #000; border: none; padding: 10px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; cursor: pointer; margin-top: 20px; display: none; width: 100%; animation: popIn 0.3s ease; }
 
-        /* MODALS */
+        /* MODALS (No Alerts) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
         .modal-box { background: #2f3136; padding: 30px; border-radius: 16px; width: 90%; max-width: 400px; text-align: center; border: 1px solid #444; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
@@ -123,7 +132,7 @@
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             background: #43b581; color: white; padding: 12px 25px; border-radius: 30px;
             font-weight: bold; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 200;
-            animation: fadeUp 0.3s ease;
+            animation: popIn 0.3s ease;
         }
 
         @media (max-width: 900px) {
@@ -219,14 +228,6 @@
     </div>
 </div>
 
-<div class="modal-overlay" id="linkCopiedModal">
-    <div class="modal-box">
-        <div class="modal-title"><i class="fas fa-check-circle" style="color:var(--accent)"></i> Copied!</div>
-        <p class="modal-desc">Room ID copied. Send it to your friends!</p>
-        <button class="btn-modal btn-cancel" onclick="document.getElementById('linkCopiedModal').classList.remove('active')">Okay</button>
-    </div>
-</div>
-
 <div class="modal-overlay active" id="landingModal" style="background: #1e212b; z-index: 999;">
     <div class="modal-box" style="width: 100%; max-width: 400px; padding: 40px; border: none; box-shadow: none;">
         <h1 class="main-title" style="font-size: 2rem;">Game Night</h1>
@@ -244,14 +245,15 @@
     </div>
 </div>
 
-<div id="toast" class="toast"><i class="fas fa-check"></i> Action Successful</div>
+<div id="toast" class="toast"><i class="fas fa-check"></i> Copied!</div>
 
 <script type="module">
+    // --- FIREBASE IMPORTS ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
     import { getDatabase, ref, push, onValue, remove, update, set } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js";
 
-    // --- PASTE YOUR CONFIG BELOW ---
-    const firebaseConfig = {
+    // --- PASTE YOUR CONFIG HERE ---
+const firebaseConfig = {
   apiKey: "AIzaSyCbigtq6gNoy_eJjoTPb1jMbkeI9FTC4uI",
   authDomain: "gamenighthub.firebaseapp.com",
   databaseURL: "https://gamenighthub-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -371,7 +373,7 @@
 
     function showToast(msg) {
         const t = document.getElementById('toast');
-        t.innerHTML = `<i class="fas fa-check"></i> ${msg}`;
+        t.innerText = msg;
         t.style.display = 'block';
         setTimeout(() => t.style.display = 'none', 2000);
     }
@@ -397,6 +399,7 @@
                 modesHtml += `</div>`;
             }
 
+            // Desktop
             const desktopLi = document.createElement('li');
             desktopLi.className = 'game-item';
             desktopLi.innerHTML = `
@@ -412,6 +415,7 @@
             const container = document.getElementById(`list-${game.category}`);
             if(container) container.appendChild(desktopLi);
 
+            // Mobile
             let iconClass = '';
             if(game.category === 'steam') iconClass = 'fab fa-steam icon-steam';
             if(game.category === 'roblox') iconClass = 'fas fa-cube icon-roblox';
