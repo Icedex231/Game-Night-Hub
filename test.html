@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Game Night Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    
+    <style>
+        :root {
+            --bg: #1e212b; --glass: #2f3136; --primary: #7289da; --accent: #43b581;
+            --danger: #ed4245; --warning: #faa61a; --text: #ffffff; --text-dim: #b9bbbe;
+            --input-bg: #202225;
+            --steam: #3498db; --roblox: #e74c3c; --web: #f1c40f;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; align-items: center; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        /* ROOM BAR */
+        .room-bar {
+            background: var(--primary); color: white; padding: 10px 20px; border-radius: 30px;
+            font-weight: bold; margin-bottom: 20px; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(114, 137, 218, 0.4); border: 1px solid rgba(255,255,255,0.1);
+        }
+        .status-dot { width: 10px; height: 10px; background: #ed4245; border-radius: 50%; box-shadow: 0 0 10px #ed4245; transition: 0.3s; }
+        .status-dot.connected { background: #43b581; box-shadow: 0 0 10px #43b581; }
+
+        .main-title {
+            font-size: 3rem; font-weight: 900; text-transform: uppercase; letter-spacing: 5px;
+            margin: 0 0 30px 0; text-align: center; text-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            background: linear-gradient(to right, #fff, #b9bbbe); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .dashboard { display: grid; grid-template-columns: 1fr 380px; gap: 20px; width: 100%; max-width: 1300px; align-items: start; }
+        .section-library { display: flex; flex-direction: column; gap: 15px; }
+
+        /* ADD PANEL */
+        .add-panel {
+            background: var(--glass); padding: 20px; border-radius: 12px; display: flex; gap: 12px;
+            flex-wrap: nowrap; border: 1px solid #333; position: relative; z-index: 20; align-items: flex-end;
+        }
+        .input-group { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+        .input-label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; font-weight: bold; margin-left: 2px; white-space: nowrap;}
+        .modern-input { background: var(--input-bg); border: 1px solid #40444b; color: white; padding: 12px; border-radius: 8px; font-size: 0.95rem; outline: none; width: 100%; }
+        .modern-input:focus { border-color: var(--primary); }
+
+        /* CUSTOM DROPDOWN */
+        .custom-select-wrapper { position: relative; user-select: none; width: 100%; }
+        .custom-select-trigger {
+            position: relative; display: flex; align-items: center; justify-content: space-between;
+            padding: 12px; font-size: 0.95rem; background: var(--input-bg); border: 1px solid #40444b; border-radius: 8px; cursor: pointer; white-space: nowrap;
+        }
+        .custom-options {
+            position: absolute; display: none; top: 100%; left: 0; right: 0; background: #202225; border: 1px solid #40444b; z-index: 50;
+            border-radius: 8px; margin-top: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .custom-select.open .custom-options { display: block; }
+        .custom-option { display: block; padding: 12px; font-size: 0.9rem; color: var(--text-dim); cursor: pointer; border-bottom: 1px solid #333; }
+        .custom-option:last-child { border-bottom: none; }
+        .custom-option:hover { background: #333; color: white; }
+        .custom-option.selected { color: #fff; background: var(--primary); }
+        
+        .btn-add { background: var(--primary); color: white; border: none; width: 50px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; height: 42px; flex-shrink: 0; }
+
+        /* LAYOUTS */
+        .desktop-view-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        .cat-card { background: var(--glass); border: 1px solid #333; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; height: 500px; min-width: 0; }
+        .cat-header { padding: 15px; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; white-space: nowrap; }
+        .cat-header.steam { border-left: 4px solid var(--steam); }
+        .cat-header.roblox { border-left: 4px solid var(--roblox); }
+        .cat-header.web { border-left: 4px solid var(--web); }
+
+        .mobile-view-container { display: none; flex-direction: column; }
+        .library-card { background: var(--glass); border: 1px solid #333; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; height: 500px; }
+        .library-header { padding: 15px 20px; background: rgba(0,0,0,0.2); border-bottom: 1px solid #333; color: var(--text-dim); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; }
+
+        /* LIST ITEMS */
+        .game-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; }
+        .game-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 8px; }
+        .game-main-row { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+        .game-info { display: flex; align-items: center; gap: 10px; cursor: pointer; overflow: hidden; flex: 1; }
+        .game-name { font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cat-icon { width: 30px; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; }
+        .icon-steam { color: var(--steam); } .icon-roblox { color: var(--roblox); } .icon-web { color: var(--web); }
+
+        /* EMPTY CHECKBOXES */
+        .custom-check { width: 20px; height: 20px; border: 2px solid #4f545c; border-radius: 4px; display: grid; place-items: center; flex-shrink: 0; background: transparent; }
+        .custom-check i { opacity: 0; transform: scale(0.5); transition: 0.2s; }
+        input[type="checkbox"] { display: none; }
+        input[type="checkbox"]:checked + .custom-check { background: var(--accent); border-color: var(--accent); color: #fff; }
+        input[type="checkbox"]:checked + .custom-check i { opacity: 1; transform: scale(1); }
+
+        .mode-list { display: flex; flex-wrap: wrap; gap: 6px; padding-left: 30px; }
+        .mode-item { display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 4px; cursor: pointer; }
+        .mode-check { width: 12px; height: 12px; border: 1px solid #666; border-radius: 2px; display: grid; place-items: center; font-size: 8px; flex-shrink: 0; background: transparent; }
+        .mode-check i { opacity: 0; transition: 0.2s; }
+        input[type="checkbox"]:checked + .mode-check { background: var(--primary); border-color: var(--primary); color: white; }
+        input[type="checkbox"]:checked + .mode-check i { opacity: 1; }
+        .mode-name { font-size: 0.8rem; color: var(--text-dim); }
+
+        .delete-btn { background: none; border: none; color: var(--danger); opacity: 0.5; cursor: pointer; padding: 5px; font-size: 1rem; }
+
+        /* WHEEL */
+        .section-wheel { position: sticky; top: 10px; background: #2f3136; padding: 25px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; border: 1px solid #333; z-index: 5; transform: translateZ(0); }
+        .winner-box { margin-bottom: 50px; text-align: center; min-height: 80px; width: 100%; }
+        .winner-label { color: var(--text-dim); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;}
+        .winner-name { color: var(--accent); font-size: 1.8rem; font-weight: 800; margin: 0; line-height: 1.2; }
+        .winner-mode { font-size: 0.9rem; color: #fff; background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 12px; margin-top: 8px; display: inline-block; border: 1px solid var(--accent); }
+        .wheel-container { position: relative; width: 100%; max-width: 320px; aspect-ratio: 1/1; margin-bottom: 25px; }
+        canvas { width: 100%; height: 100%; border-radius: 50%; transition: transform 2.5s cubic-bezier(0.1, 0, 0.2, 1); will-change: transform; }
+        .pointer { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 35px solid white; z-index: 10; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .spin-btn { background: var(--accent); color: white; border: none; padding: 15px 0; border-radius: 10px; font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; cursor: pointer; width: 100%; box-shadow: 0 4px 0 #2a7b56; text-transform: uppercase; }
+        .spin-btn:active { transform: translateY(4px); box-shadow: none; }
+        .veto-btn { background: var(--warning); color: #000; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 15px; display: none; width: 100%; animation: popIn 0.3s ease; }
+
+        /* MODALS */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; display: none; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: #2f3136; padding: 30px; border-radius: 16px; width: 90%; max-width: 400px; text-align: center; border: 1px solid #444; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
+        .modal-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; color: white; }
+        .modal-desc { color: var(--text-dim); margin-bottom: 25px; font-size: 1rem; }
+        .modal-actions { display: flex; gap: 10px; justify-content: center; }
+        .btn-modal { padding: 12px 30px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        .btn-cancel { background: #4f545c; color: white; }
+        .btn-confirm { background: var(--danger); color: white; }
+
+        @media (max-width: 900px) {
+            .main-title { font-size: 2rem; }
+            .dashboard { grid-template-columns: 1fr; gap: 15px; }
+            .add-panel { overflow-x: auto; }
+            .section-wheel { order: -1; position: relative; top: 0; width: 100%; padding: 20px; margin-bottom: 10px; }
+            .wheel-container { max-width: 240px; margin-bottom: 20px; }
+            .winner-box { margin-bottom: 30px; }
+            .desktop-view-container { display: none; }
+            .mobile-view-container { display: flex; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="room-bar" id="roomBar" onclick="copyRoomLink()">
+    <div class="status-dot" id="statusDot"></div>
+    <span id="roomCodeDisplay">Connecting...</span>
+    <i class="fas fa-copy" style="margin-left:auto; opacity:0.6;"></i>
+</div>
+
+<h1 class="main-title">GAME NIGHT IDEAS</h1>
+
+<div class="dashboard">
+    <div class="section-library">
+        <div class="add-panel">
+            <div class="input-group">
+                <span class="input-label">Game Name</span>
+                <input type="text" id="inName" class="modern-input" placeholder="e.g. Left 4 Dead 2">
+            </div>
+            <div class="input-group" style="max-width: 140px;">
+                <span class="input-label">Category</span>
+                <input type="hidden" id="inCatValue" value="steam">
+                <div class="custom-select-wrapper">
+                    <div class="custom-select">
+                        <div class="custom-select-trigger">
+                            <span id="catTriggerText">Steam</span>
+                            <i class="fas fa-chevron-down select-arrow" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <div class="custom-options">
+                            <span class="custom-option selected" data-value="steam">Steam</span>
+                            <span class="custom-option" data-value="roblox">Roblox</span>
+                            <span class="custom-option" data-value="web">Web/Other</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group">
+                <span class="input-label">Modes</span>
+                <input type="text" id="inModes" class="modern-input" placeholder="Campaign, Versus">
+            </div>
+            <button class="btn-add" onclick="addGame()"><i class="fas fa-plus"></i></button>
+        </div>
+
+        <div class="desktop-view-container">
+            <div class="cat-card"><div class="cat-header steam"><span><i class="fab fa-steam"></i> Steam</span><span id="count-steam">0</span></div><ul class="game-list" id="list-steam"></ul></div>
+            <div class="cat-card"><div class="cat-header roblox"><span><i class="fas fa-cube"></i> Roblox</span><span id="count-roblox">0</span></div><ul class="game-list" id="list-roblox"></ul></div>
+            <div class="cat-card"><div class="cat-header web"><span><i class="fas fa-globe"></i> Web/Other</span><span id="count-web">0</span></div><ul class="game-list" id="list-web"></ul></div>
+        </div>
+
+        <div class="mobile-view-container">
+            <div class="library-card">
+                <div class="library-header"><span>Your Games</span><span id="total-count">0 Games</span></div>
+                <ul class="game-list" id="unified-game-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-wheel">
+        <div class="winner-box">
+            <div class="winner-label">Winner</div>
+            <h2 class="winner-name" id="winnerText">SPIN IT</h2>
+            <div id="winnerMode" style="display:none;" class="winner-mode"></div>
+            <button class="veto-btn" id="vetoBtn" onclick="spinWheel()"><i class="fas fa-redo"></i> Reroll</button>
+        </div>
+        <div class="wheel-container">
+            <div class="pointer"></div>
+            <canvas id="wheelCanvas" width="600" height="600"></canvas>
+        </div>
+        <button class="spin-btn" id="mainSpinBtn" onclick="spinWheel()">SPIN WHEEL</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal-box">
+        <div class="modal-title">Delete Game?</div>
+        <p class="modal-desc">This will remove it for everyone in the room.</p>
+        <div class="modal-actions">
+            <button class="btn-modal btn-cancel" onclick="closeModal()">Cancel</button>
+            <button class="btn-modal btn-confirm" onclick="confirmDelete()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="linkCopiedModal">
+    <div class="modal-box">
+        <div class="modal-title"><i class="fas fa-check-circle" style="color:var(--accent)"></i> Copied!</div>
+        <p class="modal-desc">Room ID copied to clipboard.</p>
+        <button class="btn-modal btn-cancel" onclick="document.getElementById('linkCopiedModal').classList.remove('active')">Okay</button>
+    </div>
+</div>
+
+<div class="modal-overlay active" id="landingModal" style="background: #1e212b; z-index: 999;">
+    <div class="modal-box" style="width: 100%; max-width: 400px; padding: 40px; border: none; box-shadow: none;">
+        <h1 class="main-title" style="font-size: 2rem;">Game Night</h1>
+        <p style="color:#aaa; margin-bottom: 30px;">Create a room or enter a code to play together.</p>
+        
+        <button class="spin-btn" onclick="createRoom()" style="margin-bottom: 15px;">CREATE NEW ROOM</button>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <input type="text" id="joinCodeInput" class="modern-input" placeholder="ROOM CODE" style="text-align:center; letter-spacing: 2px; text-transform:uppercase;">
+            <button class="btn-add" style="margin:0; width: auto; padding: 0 20px;" onclick="joinRoom()">JOIN</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- PEERJS LOGIC (No Database) ---
+    let peer = null;
+    let conn = null;
+    let myId = null;
+    let hostConnection = null;
+    let isHost = false;
+    let connections = []; // For Host
+
+    // Data Store
+    let games = JSON.parse(localStorage.getItem('gameHub_local_v8')) || [
+        { id: 1, name: "Left 4 Dead 2", category: "steam", modes: [{ name: "Campaign", active: true }, { name: "Versus", active: false }], active: true }
+    ];
+
+    function initPeer(id = null) {
+        peer = new Peer(id);
+        
+        peer.on('open', (id) => {
+            myId = id;
+            document.getElementById('roomCodeDisplay').innerText = "Room ID: " + id;
+            document.getElementById('statusDot').classList.add('connected');
+            document.getElementById('landingModal').classList.remove('active');
+            
+            // If we created a room (Host), we save local games
+            if(isHost) {
+                renderList();
+                drawWheel();
+            }
+        });
+
+        peer.on('connection', (c) => {
+            // HOST LOGIC: Receive connection
+            connections.push(c);
+            setupConnection(c);
+            // Send current state to new guest
+            setTimeout(() => {
+                c.send({ type: 'SYNC_LIST', data: games });
+            }, 500);
+        });
+
+        peer.on('error', (err) => {
+            alert("Room ID not found or connection error.");
+            location.reload();
+        });
+    }
+
+    function connectToHost(hostId) {
+        isHost = false;
+        peer = new Peer();
+        peer.on('open', (id) => {
+            myId = id;
+            hostConnection = peer.connect(hostId);
+            setupConnection(hostConnection);
+            
+            document.getElementById('roomCodeDisplay').innerText = "Connected to: " + hostId;
+            document.getElementById('statusDot').classList.add('connected');
+            document.getElementById('landingModal').classList.remove('active');
+        });
+    }
+
+    function setupConnection(c) {
+        c.on('data', (data) => {
+            handleData(data);
+            // If Host receives data, broadcast to others
+            if(isHost) broadcast(data, c.peer); 
+        });
+    }
+
+    function broadcast(data, excludePeerId) {
+        connections.forEach(c => {
+            if(c.peer !== excludePeerId) c.send(data);
+        });
+    }
+
+    function handleData(payload) {
+        if(payload.type === 'SYNC_LIST') {
+            games = payload.data;
+            saveLocal();
+        }
+        if(payload.type === 'SPIN') {
+            performSpinAnimation(payload.rotation);
+        }
+    }
+
+    function sendUpdate(type, data) {
+        const payload = { type, data };
+        if(isHost) {
+            broadcast(payload, null);
+        } else if(hostConnection) {
+            hostConnection.send(payload);
+        }
+    }
+
+    // --- ROOM ACTIONS ---
+    window.createRoom = function() {
+        isHost = true;
+        // Generate a random 4-char ID? PeerJS usually uses long IDs. 
+        // Let's use PeerJS default ID generation for reliability.
+        initPeer(); 
+    };
+
+    window.joinRoom = function() {
+        const input = document.getElementById('joinCodeInput').value.trim();
+        if(input) connectToHost(input);
+    };
+
+    window.copyRoomLink = function() {
+        navigator.clipboard.writeText(myId).then(() => {
+            document.getElementById('linkCopiedModal').classList.add('active');
+        });
+    };
+
+    // --- GAME LOGIC ---
+    function saveLocal() {
+        if(isHost) localStorage.setItem('gameHub_local_v8', JSON.stringify(games));
+        renderList();
+        drawWheel();
+    }
+
+    // Update List & Broadcast
+    function updateGames(newGames) {
+        games = newGames;
+        saveLocal();
+        sendUpdate('SYNC_LIST', games);
+    }
+
+    window.addGame = function() {
+        const name = document.getElementById('inName').value.trim();
+        if (!name) return;
+        const cat = document.getElementById('inCatValue').value;
+        const modesStr = document.getElementById('inModes').value;
+        
+        let modes = [];
+        if (modesStr.trim()) {
+            modes = modesStr.split(',').map(m => { return { name: m.trim(), active: true }; }).filter(m => m.name !== '');
+        }
+        
+        games.push({ id: Date.now(), name: name, category: cat, modes: modes, active: true });
+        
+        document.getElementById('inName').value = '';
+        document.getElementById('inModes').value = '';
+        
+        updateGames(games);
+    }
+
+    window.toggleGame = function(id) {
+        const g = games.find(x => x.id == id);
+        if(g) { g.active = !g.active; updateGames(games); }
+    }
+
+    window.toggleMode = function(id, mIdx) {
+        const g = games.find(x => x.id == id);
+        if(g && g.modes[mIdx]) {
+            g.modes[mIdx].active = !g.modes[mIdx].active;
+            updateGames(games);
+        }
+    }
+
+    let deleteId = null;
+    window.openDeleteModal = function(index) { deleteId = games[index].id; document.getElementById('deleteModal').classList.add('active'); }
+    window.closeModal = function() { document.getElementById('deleteModal').classList.remove('active'); }
+    window.confirmDelete = function() {
+        if(deleteId) {
+            games = games.filter(g => g.id !== deleteId);
+            updateGames(games);
+        }
+        closeModal();
+    }
+
+    // --- RENDERING (Same as before) ---
+    function renderList() {
+        const counts = { steam: 0, roblox: 0, web: 0 };
+        document.getElementById('list-steam').innerHTML = '';
+        document.getElementById('list-roblox').innerHTML = '';
+        document.getElementById('list-web').innerHTML = '';
+        const unified = document.getElementById('unified-game-list');
+        unified.innerHTML = '';
+        document.getElementById('total-count').innerText = games.length + " Games";
+
+        games.forEach((game, index) => {
+            counts[game.category]++;
+            let modesHtml = '';
+            if (game.modes && game.modes.length > 0) {
+                modesHtml = `<div class="mode-list">`;
+                game.modes.forEach((mode, mIdx) => {
+                    modesHtml += `<label class="mode-item"><input type="checkbox" ${mode.active ? 'checked' : ''} onchange="toggleMode(${game.id}, ${mIdx})"><div class="mode-check"><i class="fas fa-check"></i></div><span class="mode-name">${mode.name}</span></label>`;
+                });
+                modesHtml += `</div>`;
+            }
+
+            // Desktop
+            const li = document.createElement('li');
+            li.className = 'game-item';
+            li.innerHTML = `
+                <div class="game-main-row">
+                    <label class="game-info">
+                        <input type="checkbox" ${game.active ? 'checked' : ''} onchange="toggleGame(${game.id})">
+                        <div class="custom-check"><i class="fas fa-check" style="font-size:12px;"></i></div>
+                        <span class="game-name">${game.name}</span>
+                    </label>
+                    <button class="delete-btn" onclick="openDeleteModal(${index})"><i class="fas fa-trash"></i></button>
+                </div>
+                ${modesHtml}`;
+            const container = document.getElementById(`list-${game.category}`);
+            if(container) container.appendChild(li);
+
+            // Mobile
+            let iconClass = '';
+            if(game.category === 'steam') iconClass = 'fab fa-steam icon-steam';
+            if(game.category === 'roblox') iconClass = 'fas fa-cube icon-roblox';
+            if(game.category === 'web') iconClass = 'fas fa-globe icon-web';
+            
+            const mLi = document.createElement('li');
+            mLi.className = 'game-item';
+            mLi.innerHTML = `
+                <div class="game-main-row">
+                    <label class="game-info">
+                        <input type="checkbox" ${game.active ? 'checked' : ''} onchange="toggleGame(${game.id})">
+                        <div class="custom-check"><i class="fas fa-check" style="font-size:12px;"></i></div>
+                        <div class="cat-icon"><i class="${iconClass}"></i></div>
+                        <span class="game-name">${game.name}</span>
+                    </label>
+                    <button class="delete-btn" onclick="openDeleteModal(${index})"><i class="fas fa-trash"></i></button>
+                </div>
+                ${modesHtml}`;
+            unified.appendChild(mLi);
+        });
+
+        document.getElementById('count-steam').innerText = counts.steam;
+        document.getElementById('count-roblox').innerText = counts.roblox;
+        document.getElementById('count-web').innerText = counts.web;
+    }
+
+    // --- WHEEL ---
+    const canvas = document.getElementById('wheelCanvas');
+    const ctx = canvas.getContext('2d');
+    let currentRotation = 0;
+    const catColors = { steam: "#3498db", roblox: "#e74c3c", web: "#f1c40f" };
+
+    function drawWheel() {
+        const activeGames = games.filter(g => g.active);
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        if (canvas.width !== rect.width * dpr) { canvas.width = rect.width * dpr; canvas.height = rect.height * dpr; ctx.scale(dpr, dpr); }
+        const w = rect.width; const cx = w / 2; const radius = (w / 2) - 10;
+        ctx.clearRect(0, 0, w, w);
+        if (activeGames.length === 0) { ctx.beginPath(); ctx.arc(cx, cx, radius, 0, Math.PI * 2); ctx.strokeStyle = "#444"; ctx.lineWidth = 4; ctx.stroke(); return; }
+        const arc = (Math.PI * 2) / activeGames.length;
+        activeGames.forEach((game, i) => {
+            const angle = i * arc;
+            ctx.beginPath(); ctx.moveTo(cx, cx); ctx.arc(cx, cx, radius, angle, angle + arc); ctx.fillStyle = catColors[game.category]; ctx.fill(); ctx.stroke();
+            ctx.save(); ctx.translate(cx, cx); ctx.rotate(angle + arc / 2); ctx.textAlign = "right"; ctx.fillStyle = "white"; ctx.font = "bold 16px Arial"; ctx.fillText(game.name, radius - 20, 5); ctx.restore();
+        });
+    }
+
+    window.spinWheel = function() {
+        const spins = 4; 
+        const randomDeg = Math.floor(Math.random() * 360);
+        const totalDeg = (spins * 360) + randomDeg;
+        
+        // Host calculates result, everyone animates
+        const newRot = currentRotation + totalDeg;
+        
+        // Local animation
+        performSpinAnimation(newRot);
+        // Send to peers
+        sendUpdate('SPIN', { rotation: newRot });
+    }
+
+    function performSpinAnimation(targetRotation) {
+        currentRotation = targetRotation;
+        const activeGames = games.filter(g => g.active);
+        
+        document.getElementById('vetoBtn').style.display = 'none';
+        document.getElementById('mainSpinBtn').disabled = true;
+        document.getElementById('mainSpinBtn').style.opacity = "0.5";
+        
+        canvas.style.transform = `rotate(${currentRotation}deg)`;
+        
+        const nameDisplay = document.getElementById('winnerText');
+        const modeDisplay = document.getElementById('winnerMode');
+        nameDisplay.innerText = "SPINNING..."; nameDisplay.style.color = "#777"; modeDisplay.style.display = "none";
+        
+        setTimeout(() => {
+            const actualRot = currentRotation % 360; const degreesPerSlice = 360 / activeGames.length;
+            const index = Math.floor((360 - ((actualRot + 90) % 360)) / degreesPerSlice) % activeGames.length;
+            const winner = activeGames[index];
+            
+            nameDisplay.innerText = winner.name; 
+            nameDisplay.style.color = "#43b581";
+            nameDisplay.style.animation = "popIn 0.3s ease";
+            
+            if (winner.modes && winner.modes.length > 0) {
+                const activeModes = winner.modes.filter(m => m.active);
+                if (activeModes.length > 0) {
+                    const randomMode = activeModes[Math.floor(Math.random() * activeModes.length)];
+                    modeDisplay.innerText = "Mode: " + randomMode.name; modeDisplay.style.display = "inline-block";
+                }
+            }
+            confetti({ particleCount: 100, spread: 60, origin: { y: 0.6 } });
+            document.getElementById('vetoBtn').style.display = 'block';
+            document.getElementById('mainSpinBtn').disabled = false;
+            document.getElementById('mainSpinBtn').style.opacity = "1";
+        }, 2500);
+    }
+
+    // Dropdown Logic
+    const customSelect = document.querySelector('.custom-select');
+    const selectTrigger = document.querySelector('.custom-select-trigger');
+    const triggerText = document.getElementById('catTriggerText');
+    const hiddenInput = document.getElementById('inCatValue');
+    const customOptions = document.querySelectorAll('.custom-option');
+
+    selectTrigger.addEventListener('click', () => customSelect.classList.toggle('open'));
+    customOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            customOptions.forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
+            triggerText.textContent = this.textContent;
+            hiddenInput.value = this.getAttribute('data-value');
+            customSelect.classList.remove('open');
+        });
+    });
+    window.addEventListener('click', (e) => {
+        if (!customSelect.contains(e.target)) customSelect.classList.remove('open');
+    });
+
+    window.onload = () => {
+        renderList();
+        drawWheel();
+    };
+    window.onresize = drawWheel;
+</script>
+</body>
+</html>
