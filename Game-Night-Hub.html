@@ -219,9 +219,7 @@
             <div class="winner-label">Winner</div>
             <h2 class="winner-name" id="winnerText">SPIN IT</h2>
             <div id="winnerMode" style="display:none;" class="winner-mode"></div>
-            <button class="veto-btn" id="vetoBtn" onclick="spinWheel()">
-                <i class="fas fa-redo"></i> Reroll
-            </button>
+            <button class="veto-btn" id="vetoBtn" onclick="spinWheel()"><i class="fas fa-redo"></i> Reroll</button>
         </div>
         <div class="wheel-container">
             <div class="pointer"></div>
@@ -239,6 +237,14 @@
             <button class="btn-modal btn-cancel" onclick="closeModal()">Cancel</button>
             <button class="btn-modal btn-confirm" onclick="confirmDelete()">Delete</button>
         </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="linkCopiedModal">
+    <div class="modal-box">
+        <div class="modal-title"><i class="fas fa-check-circle" style="color:var(--accent)"></i> Copied!</div>
+        <p class="modal-desc">Room ID copied. Send it to your friends!</p>
+        <button class="btn-modal btn-cancel" onclick="document.getElementById('linkCopiedModal').classList.remove('active')">Okay</button>
     </div>
 </div>
 
@@ -424,7 +430,7 @@
                 <div class="game-main-row">
                     <label class="game-info">
                         <input type="checkbox" ${game.active ? 'checked' : ''} onchange="toggleGame(${game.id})">
-                        <div class="custom-check"><i class="fas fa-check"></i></div>
+                        <div class="custom-check"><i class="fas fa-check" style="font-size:12px;"></i></div>
                         <span class="game-name">${game.name}</span>
                     </label>
                     <button class="delete-btn" onclick="openDeleteModal(${index})"><i class="fas fa-trash"></i></button>
@@ -445,7 +451,7 @@
                 <div class="game-main-row">
                     <label class="game-info">
                         <input type="checkbox" ${game.active ? 'checked' : ''} onchange="toggleGame(${game.id})">
-                        <div class="custom-check"><i class="fas fa-check"></i></div>
+                        <div class="custom-check"><i class="fas fa-check" style="font-size:12px;"></i></div>
                         <div class="cat-icon"><i class="${iconClass}"></i></div>
                         <span class="game-name">${game.name}</span>
                     </label>
