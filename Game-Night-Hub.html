@@ -18,7 +18,6 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; align-items: center; }
         @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         /* ROOM BAR */
         .room-bar {
@@ -54,21 +53,18 @@
         .custom-option:last-child { border-bottom: none; }
         .custom-option:hover { background: #333; color: white; }
         .custom-option.selected { color: #fff; background: var(--primary); }
-        
         .btn-add { background: var(--primary); color: white; border: none; width: 50px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; height: 42px; flex-shrink: 0; }
 
-        /* DESKTOP (3 Col) */
+        /* LAYOUTS */
         .desktop-view-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
         .cat-card { background: var(--glass); border: 1px solid #333; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; height: 500px; min-width: 0; }
         .cat-header { padding: 15px; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; white-space: nowrap; }
         .cat-header.steam { border-left: 4px solid var(--steam); } .cat-header.roblox { border-left: 4px solid var(--roblox); } .cat-header.web { border-left: 4px solid var(--web); }
 
-        /* MOBILE (1 List) */
         .mobile-view-container { display: none; flex-direction: column; }
         .library-card { background: var(--glass); border: 1px solid #333; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; height: 500px; }
         .library-header { padding: 15px 20px; background: rgba(0,0,0,0.2); border-bottom: 1px solid #333; color: var(--text-dim); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; }
 
-        /* ITEMS */
         .game-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; }
         .game-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 8px; }
         .game-main-row { display: flex; align-items: center; justify-content: space-between; width: 100%; }
@@ -77,34 +73,16 @@
         .cat-icon { width: 30px; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; }
         .icon-steam { color: var(--steam); } .icon-roblox { color: var(--roblox); } .icon-web { color: var(--web); }
 
-        /* === FIXED CHECKBOXES (EMPTY WHEN NOT SELECTED) === */
-        .custom-check { 
-            width: 22px; height: 22px; border: 2px solid #4f545c; border-radius: 6px; 
-            display: grid; place-items: center; flex-shrink: 0; 
-            background: transparent; /* Empty */
-            transition: 0.2s;
-        }
-        .custom-check i { 
-            opacity: 0; /* Invisible Checkmark */
-            transform: scale(0.5); transition: 0.2s; 
-        }
+        /* CHECKBOXES (Empty Default) */
+        .custom-check { width: 22px; height: 22px; border: 2px solid #4f545c; border-radius: 6px; display: grid; place-items: center; flex-shrink: 0; background: transparent; transition: 0.2s; }
+        .custom-check i { opacity: 0; transform: scale(0.5); transition: 0.2s; }
         input[type="checkbox"] { display: none; }
-        
-        /* When Checked */
-        input[type="checkbox"]:checked + .custom-check { 
-            background: var(--accent); 
-            border-color: var(--accent); 
-            color: #fff; 
-        }
+        input[type="checkbox"]:checked + .custom-check { background: var(--accent); border-color: var(--accent); color: #fff; }
         input[type="checkbox"]:checked + .custom-check i { opacity: 1; transform: scale(1); }
 
         .mode-list { display: flex; flex-wrap: wrap; gap: 6px; padding-left: 34px; }
         .mode-item { display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 4px; cursor: pointer; }
-        .mode-check { 
-            width: 14px; height: 14px; border: 1px solid #666; border-radius: 3px; 
-            display: grid; place-items: center; font-size: 9px; flex-shrink: 0; 
-            background: transparent; /* Empty */
-        }
+        .mode-check { width: 14px; height: 14px; border: 1px solid #666; border-radius: 3px; display: grid; place-items: center; font-size: 9px; flex-shrink: 0; background: transparent; }
         .mode-check i { opacity: 0; transition: 0.2s; }
         input[type="checkbox"]:checked + .mode-check { background: var(--primary); border-color: var(--primary); color: white; }
         input[type="checkbox"]:checked + .mode-check i { opacity: 1; }
@@ -112,40 +90,32 @@
 
         .delete-btn { background: none; border: none; color: var(--danger); opacity: 0.5; cursor: pointer; padding: 5px; font-size: 1rem; }
 
-        /* === FIXED WHEEL SPACING === */
+        /* WHEEL (Fixed Spacing) */
         .section-wheel { position: sticky; top: 10px; background: #2f3136; padding: 25px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; border: 1px solid #333; z-index: 5; transform: translateZ(0); }
-        /* Added more bottom margin to push the wheel down */
         .winner-box { margin-bottom: 60px; text-align: center; min-height: 80px; width: 100%; position: relative; z-index: 20; }
         .winner-label { color: var(--text-dim); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;}
         .winner-name { color: var(--accent); font-size: 1.8rem; font-weight: 800; margin: 0; line-height: 1.2; }
         .winner-mode { font-size: 0.9rem; color: #fff; background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 12px; margin-top: 8px; display: inline-block; border: 1px solid var(--accent); }
+        
         .wheel-container { position: relative; width: 100%; max-width: 320px; aspect-ratio: 1/1; margin-bottom: 25px; }
-        canvas { width: 100%; height: 100%; border-radius: 50%; transition: transform 2.5s cubic-bezier(0.1, 0, 0.2, 1); will-change: transform; }
-        .pointer { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 40px solid white; z-index: 10; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5)); }
+        canvas { width: 100%; height: 100%; border-radius: 50%; transition: transform 3s cubic-bezier(0.1, 0, 0.2, 1); will-change: transform; border: 4px solid white; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        /* Pointer Fixed */
+        .pointer { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 40px solid white; z-index: 10; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
         
         .spin-btn { background: var(--accent); color: white; border: none; padding: 15px 0; border-radius: 10px; font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; cursor: pointer; width: 100%; box-shadow: 0 4px 0 #2a7b56; text-transform: uppercase; }
         .spin-btn:active { transform: translateY(4px); box-shadow: none; }
-        /* Moved Veto button */
         .veto-btn { background: var(--warning); color: #000; border: none; padding: 10px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; cursor: pointer; margin-top: 15px; display: none; width: 100%; animation: popIn 0.3s ease; }
 
-        /* MODALS (Replacing Alerts) */
+        /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
-        .modal-box { background: #2f3136; padding: 30px; border-radius: 16px; width: 90%; max-width: 400px; text-align: center; border: 1px solid #444; box-shadow: 0 20px 50px rgba(0,0,0,0.6); animation: popIn 0.3s ease; }
+        .modal-box { background: #2f3136; padding: 30px; border-radius: 16px; width: 90%; max-width: 400px; text-align: center; border: 1px solid #444; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
         .modal-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; color: white; }
         .modal-desc { color: var(--text-dim); margin-bottom: 25px; font-size: 1rem; }
         .modal-actions { display: flex; gap: 10px; justify-content: center; }
         .btn-modal { padding: 12px 30px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 1rem; }
         .btn-cancel { background: #4f545c; color: white; }
         .btn-confirm { background: var(--danger); color: white; }
-
-        /* TOAST (Small Notification) */
-        .toast {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: #43b581; color: white; padding: 12px 25px; border-radius: 30px;
-            font-weight: bold; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 200;
-            animation: fadeUp 0.3s ease;
-        }
 
         @media (max-width: 900px) {
             .main-title { font-size: 2rem; }
@@ -265,72 +235,81 @@
     </div>
 </div>
 
-<div id="toast" class="toast"><i class="fas fa-check"></i> Action Successful</div>
-
 <script>
-    // --- MQTT LOGIC (HiveMQ Public - RETAIN ENABLED) ---
-    // Why HiveMQ? It handles 'Retain' messages better than EMQX public for persistent lists
+    // --- ROBUST NETWORKING (EMQX with Aggressive Sync) ---
     let client = null;
     let roomId = null;
-    let games = JSON.parse(localStorage.getItem('gameHub_backup_v14')) || [];
+    let games = JSON.parse(localStorage.getItem('gameHub_v16')) || [];
+    let myId = Math.random().toString(36).substring(7);
 
-    // Check for saved room
-    const savedRoom = localStorage.getItem('gameHub_mqtt_room');
+    // 1. Initial State
+    const savedRoom = localStorage.getItem('gameHub_room_id');
     if(savedRoom && !new URLSearchParams(window.location.search).get('room')) {
         document.getElementById('savedRoomBtn').style.display = 'block';
     }
 
-    // --- SETUP ---
+    // 2. Room Setup
     window.createRoom = function() {
         roomId = Math.random().toString(36).substring(2, 7).toUpperCase();
         connectMQTT();
     };
 
     window.joinRoom = function() {
-        const input = document.getElementById('joinCodeInput').value.trim().toUpperCase();
-        if(input.length > 0) { roomId = input; connectMQTT(); }
+        const val = document.getElementById('joinCodeInput').value.trim().toUpperCase();
+        if(val.length > 0) { roomId = val; connectMQTT(); }
     };
 
     window.joinSaved = function() { roomId = savedRoom; connectMQTT(); }
 
     function connectMQTT() {
-        localStorage.setItem('gameHub_mqtt_room', roomId);
-        
+        localStorage.setItem('gameHub_room_id', roomId);
         document.getElementById('landingModal').classList.remove('active');
         document.getElementById('roomCodeDisplay').innerText = "Room: " + roomId;
         window.history.pushState({}, "", `?room=${roomId}`);
 
-        // HiveMQ Public Broker (WSS)
-        client = mqtt.connect('wss://broker.hivemq.com:8000/mqtt');
+        // EMQX Public Broker (WSS Port 8084 is generally unblocked)
+        client = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
 
         client.on('connect', () => {
             document.getElementById('statusDot').classList.add('connected');
-            // Subscribe
-            client.subscribe(`gn_app_v4/${roomId}`);
+            // Subscribe to room
+            client.subscribe(`gn_hub_fix/${roomId}`);
             
-            // If we created a new room and have games, publish them
-            // If we joined existing, wait for retain
-            if(games.length > 0) publish('DATA', games, true);
+            // HEARTBEAT SYNC: Every 2s, if I have games, I broadcast them.
+            // This ensures anyone joining late gets the data immediately.
+            setInterval(() => {
+                if(games.length > 0) publish('SYNC_STATE', games);
+            }, 3000);
         });
 
         client.on('message', (topic, message) => {
-            const payload = JSON.parse(message.toString());
-            
-            if (payload.type === 'DATA') {
-                games = payload.payload;
-                localStorage.setItem('gameHub_backup_v14', JSON.stringify(games)); 
-                renderList();
-                drawWheel();
-            } else if (payload.type === 'SPIN') {
-                performSpinAnimation(payload.rotation);
-            }
+            try {
+                const payload = JSON.parse(message.toString());
+                if(payload.sender === myId) return; // Ignore self
+
+                if (payload.type === 'SYNC_STATE') {
+                    // Only update if data is different to avoid flickering
+                    if(JSON.stringify(payload.data) !== JSON.stringify(games)) {
+                        games = payload.data;
+                        saveAndRender();
+                    }
+                } else if (payload.type === 'SPIN') {
+                    performSpinAnimation(payload.rotation);
+                }
+            } catch(e) {}
         });
     }
 
-    function publish(type, payload, retain = false) {
+    function publish(type, data) {
         if(!client) return;
-        const msg = JSON.stringify({ type, payload });
-        client.publish(`gn_app_v4/${roomId}`, msg, { retain: retain });
+        const payload = JSON.stringify({ type, data, sender: myId });
+        client.publish(`gn_hub_fix/${roomId}`, payload);
+    }
+
+    function saveAndRender() {
+        localStorage.setItem('gameHub_v16', JSON.stringify(games));
+        renderList();
+        drawWheel();
     }
 
     // --- GAME ACTIONS ---
@@ -349,32 +328,24 @@
         document.getElementById('inName').value = '';
         document.getElementById('inModes').value = '';
         
-        updateGameList();
+        saveAndRender();
+        publish('SYNC_STATE', games);
     }
 
     window.toggleGame = function(id) {
         const g = games.find(x => x.id == id);
-        if(g) { g.active = !g.active; updateGameList(); }
+        if(g) { g.active = !g.active; saveAndRender(); publish('SYNC_STATE', games); }
     }
 
     window.toggleMode = function(id, mIdx) {
         const g = games.find(x => x.id == id);
         if(g && g.modes[mIdx]) {
             g.modes[mIdx].active = !g.modes[mIdx].active;
-            updateGameList();
+            saveAndRender();
+            publish('SYNC_STATE', games);
         }
     }
 
-    function updateGameList() {
-        // Save local backup immediately
-        localStorage.setItem('gameHub_backup_v14', JSON.stringify(games));
-        // Push to server (Retained = true so new users see it)
-        publish('DATA', games, true);
-        renderList();
-        drawWheel();
-    }
-
-    // --- MODALS (Replacing Alerts) ---
     let deleteId = null;
     window.openDeleteModal = function(index) { 
         deleteId = games[index].id; 
@@ -384,23 +355,17 @@
     window.confirmDelete = function() {
         if(deleteId) {
             games = games.filter(g => g.id !== deleteId);
-            updateGameList();
+            saveAndRender();
+            publish('SYNC_STATE', games);
         }
         closeModal();
     }
 
     window.copyRoomLink = function() {
         navigator.clipboard.writeText(roomId).then(() => {
-            showToast("Room ID Copied!");
+            document.getElementById('linkCopiedModal').classList.add('active');
         });
     };
-
-    function showToast(msg) {
-        const t = document.getElementById('toast');
-        t.innerHTML = `<i class="fas fa-check"></i> ${msg}`;
-        t.style.display = 'block';
-        setTimeout(() => t.style.display = 'none', 2000);
-    }
 
     // --- RENDER ---
     function renderList() {
@@ -484,7 +449,17 @@
         activeGames.forEach((game, i) => {
             const angle = i * arc;
             ctx.beginPath(); ctx.moveTo(cx, cx); ctx.arc(cx, cx, radius, angle, angle + arc); ctx.fillStyle = catColors[game.category]; ctx.fill(); ctx.stroke();
-            ctx.save(); ctx.translate(cx, cx); ctx.rotate(angle + arc / 2); ctx.textAlign = "right"; ctx.fillStyle = "white"; ctx.font = "bold 16px Arial"; ctx.fillText(game.name, radius - 20, 5); ctx.restore();
+            ctx.save(); ctx.translate(cx, cx); ctx.rotate(angle + arc / 2); ctx.textAlign = "right"; ctx.fillStyle = "white"; ctx.font = "bold 16px Arial"; 
+            
+            // Auto Flip Text
+            if (angle + arc / 2 > Math.PI / 2 && angle + arc / 2 < 3 * Math.PI / 2) {
+                ctx.rotate(Math.PI);
+                ctx.textAlign = "left";
+                ctx.fillText(game.name, -radius + 20, 5);
+            } else {
+                ctx.fillText(game.name, radius - 20, 5);
+            }
+            ctx.restore();
         });
     }
 
@@ -493,8 +468,7 @@
         const randomDeg = Math.floor(Math.random() * 360);
         const totalDeg = (spins * 360) + randomDeg;
         const newRot = currentRotation + totalDeg;
-        // Spin actions are NOT retained (retain = false)
-        publish('SPIN', { rotation: newRot }, false);
+        publish('SPIN', { rotation: newRot });
     }
 
     function performSpinAnimation(targetRotation) {
@@ -531,7 +505,7 @@
             document.getElementById('vetoBtn').style.display = 'block';
             document.getElementById('mainSpinBtn').disabled = false;
             document.getElementById('mainSpinBtn').style.opacity = "1";
-        }, 2500);
+        }, 3000); // 3s Animation Match
     }
 
     // Dropdown Logic
