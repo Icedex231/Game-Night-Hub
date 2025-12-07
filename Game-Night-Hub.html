@@ -6,7 +6,6 @@
     <title>Game Night Hub</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     
     <style>
         :root {
@@ -72,7 +71,7 @@
         .cat-icon { width: 30px; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; }
         .icon-steam { color: var(--steam); } .icon-roblox { color: var(--roblox); } .icon-web { color: var(--web); }
 
-        /* --- FIXED CHECKBOXES (Empty when not selected) --- */
+        /* FIXED CHECKBOXES */
         .custom-check { width: 20px; height: 20px; border: 2px solid #4f545c; border-radius: 4px; display: grid; place-items: center; flex-shrink: 0; background: transparent; }
         .custom-check i { opacity: 0; transform: scale(0.5); transition: 0.2s; }
         input[type="checkbox"] { display: none; }
@@ -90,10 +89,7 @@
         .delete-btn { background: none; border: none; color: var(--danger); opacity: 0.5; cursor: pointer; padding: 5px; font-size: 1rem; }
 
         .section-wheel { position: sticky; top: 10px; background: #2f3136; padding: 25px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; border: 1px solid #333; z-index: 5; transform: translateZ(0); }
-        
-        /* FIXED SPACING FOR ARROW */
-        .winner-box { margin-bottom: 60px; text-align: center; min-height: 80px; width: 100%; }
-        
+        .winner-box { margin-bottom: 50px; text-align: center; min-height: 80px; width: 100%; }
         .winner-label { color: var(--text-dim); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;}
         .winner-name { color: var(--accent); font-size: 1.8rem; font-weight: 800; margin: 0; line-height: 1.2; }
         .winner-mode { font-size: 0.9rem; color: #fff; background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 12px; margin-top: 8px; display: inline-block; border: 1px solid var(--accent); }
@@ -102,11 +98,7 @@
         .pointer { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 35px solid white; z-index: 10; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
         .spin-btn { background: var(--accent); color: white; border: none; padding: 15px 0; border-radius: 10px; font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; cursor: pointer; width: 100%; box-shadow: 0 4px 0 #2a7b56; text-transform: uppercase; }
         .spin-btn:active { transform: translateY(4px); box-shadow: none; }
-        
-        .veto-btn { 
-            background: var(--warning); color: #000; border: none; padding: 12px; border-radius: 8px; 
-            font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 20px; display: none; width: 100%; animation: popIn 0.3s ease; 
-        }
+        .veto-btn { background: var(--warning); color: #000; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 20px; display: none; width: 100%; animation: popIn 0.3s ease; }
 
         /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; display: none; align-items: center; justify-content: center; }
@@ -238,68 +230,109 @@
 </div>
 
 <script>
-    // --- MQTT LOGIC (EMQX Public Broker) ---
-    let client = null;
+    // --- DWEET.IO LOGIC (Standard HTTP - Bulletproof) ---
     let roomId = null;
-    let games = JSON.parse(localStorage.getItem('gameHub_backup_v10')) || [];
+    let games = JSON.parse(localStorage.getItem('gameHub_backup_v11')) || [];
+    let lastProcessedDate = 0;
+    let pollInterval = null;
 
-    const savedRoom = localStorage.getItem('gameHub_mqtt_room');
+    // 1. Initial State
+    const savedRoom = localStorage.getItem('gameHub_room_id');
     if(savedRoom && !new URLSearchParams(window.location.search).get('room')) {
         document.getElementById('savedRoomBtn').style.display = 'block';
     }
 
+    function generateId() {
+        return Math.random().toString(36).substring(2, 8).toUpperCase();
+    }
+
+    // 2. Network Functions
+    function sendState(type, payload) {
+        // We use dweet.io which is just a web request
+        const dweetName = `gn_hub_v2_${roomId}`;
+        const data = {
+            type: type,
+            payload: payload,
+            timestamp: Date.now()
+        };
+        
+        fetch(`https://dweet.io/dweet/for/${dweetName}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).catch(err => console.log("Network error (sending):", err));
+    }
+
+    function startListening() {
+        // Polling every 1.5 seconds
+        if(pollInterval) clearInterval(pollInterval);
+        
+        document.getElementById('statusDot').classList.add('connected'); // Assume green if logic starts
+        
+        pollInterval = setInterval(() => {
+            const dweetName = `gn_hub_v2_${roomId}`;
+            fetch(`https://dweet.io/get/latest/dweet/for/${dweetName}`)
+                .then(res => res.json())
+                .then(res => {
+                    if(res.this === 'succeeded' && res.with.length > 0) {
+                        const content = res.with[0].content;
+                        // Only process new messages
+                        if(content.timestamp > lastProcessedDate) {
+                            lastProcessedDate = content.timestamp;
+                            handleMessage(content);
+                        }
+                    }
+                })
+                .catch(err => console.log("Polling error (harmless):", err));
+        }, 1500);
+    }
+
+    function handleMessage(msg) {
+        if (msg.type === 'UPDATE_LIST') {
+            games = msg.payload;
+            localStorage.setItem('gameHub_backup_v11', JSON.stringify(games));
+            renderList();
+            drawWheel();
+        } else if (msg.type === 'SPIN') {
+            performSpinAnimation(msg.payload.rotation);
+        } else if (msg.type === 'SYNC_REQUEST') {
+            // New person joined, send them the list if we have one
+            if(games.length > 0) sendState('UPDATE_LIST', games);
+        }
+    }
+
+    // 3. Room Management
     window.createRoom = function() {
-        roomId = Math.random().toString(36).substring(2, 6).toUpperCase();
-        connectMQTT();
+        roomId = generateId();
+        enterRoom();
     };
 
     window.joinRoom = function() {
-        const input = document.getElementById('joinCodeInput').value.trim().toUpperCase();
-        if(input.length > 0) { roomId = input; connectMQTT(); }
+        const val = document.getElementById('joinCodeInput').value.trim().toUpperCase();
+        if(val) { roomId = val; enterRoom(); }
     };
 
-    window.joinSaved = function() { roomId = savedRoom; connectMQTT(); }
+    window.joinSaved = function() {
+        roomId = savedRoom;
+        enterRoom();
+    };
 
-    function connectMQTT() {
-        localStorage.setItem('gameHub_mqtt_room', roomId);
-        
+    function enterRoom() {
+        localStorage.setItem('gameHub_room_id', roomId);
         document.getElementById('landingModal').classList.remove('active');
         document.getElementById('roomCodeDisplay').innerText = "Room: " + roomId;
         window.history.pushState({}, "", `?room=${roomId}`);
-
-        // EMQX Secure WebSocket (Works better on Mobile)
-        client = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
-
-        client.on('connect', () => {
-            document.getElementById('statusDot').classList.add('connected');
-            client.subscribe(`gn_hub_v1/${roomId}/#`);
-            // Load fresh data if available, but dont wipe local yet
-            publish('REQUEST_SYNC', {});
-        });
-
-        client.on('message', (topic, message) => {
-            const payload = JSON.parse(message.toString());
-            
-            if (payload.type === 'UPDATE_LIST') {
-                games = payload.data;
-                localStorage.setItem('gameHub_backup_v10', JSON.stringify(games)); // Back up
-                renderList();
-                drawWheel();
-            } else if (payload.type === 'SPIN') {
-                performSpinAnimation(payload.rotation);
-            } else if (payload.type === 'REQUEST_SYNC') {
-                if(games.length > 0) publish('UPDATE_LIST', games, true);
-            }
-        });
+        
+        renderList();
+        drawWheel();
+        
+        startListening();
+        
+        // Ask if anyone is there
+        setTimeout(() => sendState('SYNC_REQUEST', {}), 500);
     }
 
-    function publish(type, data, retain = false) {
-        if(!client) return;
-        const payload = JSON.stringify({ type, data });
-        client.publish(`gn_hub_v1/${roomId}/data`, payload, { retain: retain });
-    }
-
-    // --- GAME ACTIONS ---
+    // 4. Game Logic
     window.addGame = function() {
         const name = document.getElementById('inName').value.trim();
         if (!name) return;
@@ -315,27 +348,27 @@
         document.getElementById('inName').value = '';
         document.getElementById('inModes').value = '';
         
-        updateGameList();
+        updateList();
     }
 
     window.toggleGame = function(id) {
         const g = games.find(x => x.id == id);
-        if(g) { g.active = !g.active; updateGameList(); }
+        if(g) { g.active = !g.active; updateList(); }
     }
 
     window.toggleMode = function(id, mIdx) {
         const g = games.find(x => x.id == id);
         if(g && g.modes[mIdx]) {
             g.modes[mIdx].active = !g.modes[mIdx].active;
-            updateGameList();
+            updateList();
         }
     }
 
-    function updateGameList() {
-        localStorage.setItem('gameHub_backup_v10', JSON.stringify(games));
-        publish('UPDATE_LIST', games, true);
+    function updateList() {
+        localStorage.setItem('gameHub_backup_v11', JSON.stringify(games));
         renderList();
         drawWheel();
+        sendState('UPDATE_LIST', games);
     }
 
     let deleteId = null;
@@ -347,81 +380,12 @@
     window.confirmDelete = function() {
         if(deleteId) {
             games = games.filter(g => g.id !== deleteId);
-            updateGameList();
+            updateList();
         }
         closeModal();
     }
 
-    window.copyRoomLink = function() {
-        navigator.clipboard.writeText(roomId).then(() => {
-            document.getElementById('linkCopiedModal').classList.add('active');
-        });
-    };
-
-    // --- RENDER ---
-    function renderList() {
-        const counts = { steam: 0, roblox: 0, web: 0 };
-        document.getElementById('list-steam').innerHTML = '';
-        document.getElementById('list-roblox').innerHTML = '';
-        document.getElementById('list-web').innerHTML = '';
-        const unified = document.getElementById('unified-game-list');
-        unified.innerHTML = '';
-        document.getElementById('total-count').innerText = games.length + " Games";
-
-        games.forEach((game, index) => {
-            counts[game.category]++;
-            let modesHtml = '';
-            if (game.modes && game.modes.length > 0) {
-                modesHtml = `<div class="mode-list">`;
-                game.modes.forEach((mode, mIdx) => {
-                    modesHtml += `<label class="mode-item"><input type="checkbox" ${mode.active ? 'checked' : ''} onchange="toggleMode(${game.id}, ${mIdx})"><div class="mode-check"><i class="fas fa-check"></i></div><span class="mode-name">${mode.name}</span></label>`;
-                });
-                modesHtml += `</div>`;
-            }
-
-            const desktopLi = document.createElement('li');
-            desktopLi.className = 'game-item';
-            desktopLi.innerHTML = `
-                <div class="game-main-row">
-                    <label class="game-info">
-                        <input type="checkbox" ${game.active ? 'checked' : ''} onchange="toggleGame(${game.id})">
-                        <div class="custom-check"><i class="fas fa-check" style="font-size:12px;"></i></div>
-                        <span class="game-name">${game.name}</span>
-                    </label>
-                    <button class="delete-btn" onclick="openDeleteModal(${index})"><i class="fas fa-trash"></i></button>
-                </div>
-                ${modesHtml}`;
-            const container = document.getElementById(`list-${game.category}`);
-            if(container) container.appendChild(desktopLi);
-
-            // Mobile
-            let iconClass = '';
-            if(game.category === 'steam') iconClass = 'fab fa-steam icon-steam';
-            if(game.category === 'roblox') iconClass = 'fas fa-cube icon-roblox';
-            if(game.category === 'web') iconClass = 'fas fa-globe icon-web';
-            
-            const mLi = document.createElement('li');
-            mLi.className = 'game-item';
-            mLi.innerHTML = `
-                <div class="game-main-row">
-                    <label class="game-info">
-                        <input type="checkbox" ${game.active ? 'checked' : ''} onchange="toggleGame(${game.id})">
-                        <div class="custom-check"><i class="fas fa-check" style="font-size:12px;"></i></div>
-                        <div class="cat-icon"><i class="${iconClass}"></i></div>
-                        <span class="game-name">${game.name}</span>
-                    </label>
-                    <button class="delete-btn" onclick="openDeleteModal(${index})"><i class="fas fa-trash"></i></button>
-                </div>
-                ${modesHtml}`;
-            unified.appendChild(mLi);
-        });
-
-        document.getElementById('count-steam').innerText = counts.steam;
-        document.getElementById('count-roblox').innerText = counts.roblox;
-        document.getElementById('count-web').innerText = counts.web;
-    }
-
-    // --- WHEEL ---
+    // 5. Wheel Logic
     const canvas = document.getElementById('wheelCanvas');
     const ctx = canvas.getContext('2d');
     let currentRotation = 0;
@@ -448,7 +412,7 @@
         const randomDeg = Math.floor(Math.random() * 360);
         const totalDeg = (spins * 360) + randomDeg;
         const newRot = currentRotation + totalDeg;
-        publish('SPIN', { rotation: newRot }, true);
+        sendState('SPIN', { rotation: newRot });
     }
 
     function performSpinAnimation(targetRotation) {
@@ -488,6 +452,17 @@
         }, 2500);
     }
 
+    // Auto-Run from URL
+    const urlRoom = new URLSearchParams(window.location.search).get('room');
+    if(urlRoom) { roomId = urlRoom.toUpperCase(); enterRoom(); }
+
+    window.copyRoomLink = function() {
+        navigator.clipboard.writeText(roomId).then(() => {
+            document.getElementById('linkCopiedModal').classList.add('active');
+        });
+    };
+
+    // UI Helpers
     const customSelect = document.querySelector('.custom-select');
     const selectTrigger = document.querySelector('.custom-select-trigger');
     const triggerText = document.getElementById('catTriggerText');
@@ -507,6 +482,70 @@
     window.addEventListener('click', (e) => {
         if (!customSelect.contains(e.target)) customSelect.classList.remove('open');
     });
+
+    // Rendering Logic
+    function renderList() {
+        const counts = { steam: 0, roblox: 0, web: 0 };
+        document.getElementById('list-steam').innerHTML = '';
+        document.getElementById('list-roblox').innerHTML = '';
+        document.getElementById('list-web').innerHTML = '';
+        const unified = document.getElementById('unified-game-list');
+        unified.innerHTML = '';
+        document.getElementById('total-count').innerText = games.length + " Games";
+
+        games.forEach((game, index) => {
+            counts[game.category]++;
+            let modesHtml = '';
+            if (game.modes && game.modes.length > 0) {
+                modesHtml = `<div class="mode-list">`;
+                game.modes.forEach((mode, mIdx) => {
+                    modesHtml += `<label class="mode-item"><input type="checkbox" ${mode.active ? 'checked' : ''} onchange="toggleMode(${game.id}, ${mIdx})"><div class="mode-check"><i class="fas fa-check"></i></div><span class="mode-name">${mode.name}</span></label>`;
+                });
+                modesHtml += `</div>`;
+            }
+
+            // Desktop Item
+            const desktopLi = document.createElement('li');
+            desktopLi.className = 'game-item';
+            desktopLi.innerHTML = `
+                <div class="game-main-row">
+                    <label class="game-info">
+                        <input type="checkbox" ${game.active ? 'checked' : ''} onchange="toggleGame(${game.id})">
+                        <div class="custom-check"><i class="fas fa-check" style="font-size:12px;"></i></div>
+                        <span class="game-name">${game.name}</span>
+                    </label>
+                    <button class="delete-btn" onclick="openDeleteModal(${index})"><i class="fas fa-trash"></i></button>
+                </div>
+                ${modesHtml}`;
+            const container = document.getElementById(`list-${game.category}`);
+            if(container) container.appendChild(desktopLi);
+
+            // Mobile Item
+            let iconClass = '';
+            if(game.category === 'steam') iconClass = 'fab fa-steam icon-steam';
+            if(game.category === 'roblox') iconClass = 'fas fa-cube icon-roblox';
+            if(game.category === 'web') iconClass = 'fas fa-globe icon-web';
+            
+            const mLi = document.createElement('li');
+            mLi.className = 'game-item';
+            mLi.innerHTML = `
+                <div class="game-main-row">
+                    <label class="game-info">
+                        <input type="checkbox" ${game.active ? 'checked' : ''} onchange="toggleGame(${game.id})">
+                        <div class="custom-check"><i class="fas fa-check" style="font-size:12px;"></i></div>
+                        <div class="cat-icon"><i class="${iconClass}"></i></div>
+                        <span class="game-name">${game.name}</span>
+                    </label>
+                    <button class="delete-btn" onclick="openDeleteModal(${index})"><i class="fas fa-trash"></i></button>
+                </div>
+                ${modesHtml}`;
+            unified.appendChild(mLi);
+        });
+
+        document.getElementById('count-steam').innerText = counts.steam;
+        document.getElementById('count-roblox').innerText = counts.roblox;
+        document.getElementById('count-web').innerText = counts.web;
+    }
 
     window.onload = () => { renderList(); drawWheel(); };
     window.onresize = drawWheel;
