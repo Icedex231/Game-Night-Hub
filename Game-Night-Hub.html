@@ -25,12 +25,8 @@
             font-weight: bold; margin-bottom: 10px; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; cursor: pointer;
             box-shadow: 0 4px 10px rgba(114, 137, 218, 0.3);
         }
-        
         /* STATUS DOT */
-        .status-dot { 
-            width: 12px; height: 12px; background: #ed4245; border-radius: 50%; 
-            box-shadow: 0 0 8px #ed4245; transition: 0.3s; border: 2px solid rgba(255,255,255,0.2);
-        }
+        .status-dot { width: 12px; height: 12px; background: #ed4245; border-radius: 50%; box-shadow: 0 0 8px #ed4245; transition: 0.3s; border: 2px solid rgba(255,255,255,0.2); }
         .status-dot.connected { background: #43b581; box-shadow: 0 0 8px #43b581; }
 
         .main-title {
@@ -42,26 +38,15 @@
         .dashboard { display: grid; grid-template-columns: 1fr 380px; gap: 20px; width: 100%; max-width: 1300px; align-items: start; }
         .section-library { display: flex; flex-direction: column; gap: 15px; }
 
-        /* INPUT PANEL */
-        .add-panel {
-            background: var(--glass); padding: 20px; border-radius: 12px; display: flex; gap: 12px;
-            flex-wrap: nowrap; border: 1px solid #333; position: relative; z-index: 20; align-items: flex-end;
-        }
+        .add-panel { background: var(--glass); padding: 20px; border-radius: 12px; display: flex; gap: 12px; flex-wrap: nowrap; border: 1px solid #333; position: relative; z-index: 20; align-items: flex-end; }
         .input-group { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
         .input-label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; font-weight: bold; margin-left: 2px; white-space: nowrap;}
         .modern-input { background: var(--input-bg); border: 1px solid #40444b; color: white; padding: 12px; border-radius: 8px; font-size: 0.95rem; outline: none; width: 100%; }
         .modern-input:focus { border-color: var(--primary); }
 
-        /* Custom Dropdown */
         .custom-select-wrapper { position: relative; user-select: none; width: 100%; }
-        .custom-select-trigger {
-            position: relative; display: flex; align-items: center; justify-content: space-between;
-            padding: 12px; font-size: 0.95rem; background: var(--input-bg); border: 1px solid #40444b; border-radius: 8px; cursor: pointer; white-space: nowrap;
-        }
-        .custom-options {
-            position: absolute; display: none; top: 100%; left: 0; right: 0; background: #202225; border: 1px solid #40444b; z-index: 50;
-            border-radius: 8px; margin-top: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        }
+        .custom-select-trigger { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 12px; font-size: 0.95rem; background: var(--input-bg); border: 1px solid #40444b; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+        .custom-options { position: absolute; display: none; top: 100%; left: 0; right: 0; background: #202225; border: 1px solid #40444b; z-index: 50; border-radius: 8px; margin-top: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .custom-select.open .custom-options { display: block; }
         .custom-option { display: block; padding: 12px; font-size: 0.9rem; color: var(--text-dim); cursor: pointer; border-bottom: 1px solid #333; }
         .custom-option:last-child { border-bottom: none; }
@@ -70,20 +55,15 @@
         
         .btn-add { background: var(--primary); color: white; border: none; width: 50px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; height: 42px; flex-shrink: 0; }
 
-        /* DESKTOP LAYOUT (3 Col) */
         .desktop-view-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
         .cat-card { background: var(--glass); border: 1px solid #333; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; height: 500px; min-width: 0; }
         .cat-header { padding: 15px; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; white-space: nowrap; }
-        .cat-header.steam { border-left: 4px solid var(--steam); }
-        .cat-header.roblox { border-left: 4px solid var(--roblox); }
-        .cat-header.web { border-left: 4px solid var(--web); }
+        .cat-header.steam { border-left: 4px solid var(--steam); } .cat-header.roblox { border-left: 4px solid var(--roblox); } .cat-header.web { border-left: 4px solid var(--web); }
 
-        /* MOBILE LAYOUT (Unified) */
         .mobile-view-container { display: none; flex-direction: column; }
         .library-card { background: var(--glass); border: 1px solid #333; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; height: 500px; }
         .library-header { padding: 15px 20px; background: rgba(0,0,0,0.2); border-bottom: 1px solid #333; color: var(--text-dim); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; }
 
-        /* ITEMS */
         .game-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; }
         .game-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 8px; }
         .game-main-row { display: flex; align-items: center; justify-content: space-between; width: 100%; }
@@ -92,7 +72,7 @@
         .cat-icon { width: 30px; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; }
         .icon-steam { color: var(--steam); } .icon-roblox { color: var(--roblox); } .icon-web { color: var(--web); }
 
-        /* CHECKBOXES */
+        /* --- FIXED CHECKBOXES (Empty when not selected) --- */
         .custom-check { width: 20px; height: 20px; border: 2px solid #4f545c; border-radius: 4px; display: grid; place-items: center; flex-shrink: 0; background: transparent; }
         .custom-check i { opacity: 0; transform: scale(0.5); transition: 0.2s; }
         input[type="checkbox"] { display: none; }
@@ -109,9 +89,11 @@
 
         .delete-btn { background: none; border: none; color: var(--danger); opacity: 0.5; cursor: pointer; padding: 5px; font-size: 1rem; }
 
-        /* WHEEL */
         .section-wheel { position: sticky; top: 10px; background: #2f3136; padding: 25px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; border: 1px solid #333; z-index: 5; transform: translateZ(0); }
-        .winner-box { margin-bottom: 50px; text-align: center; min-height: 80px; width: 100%; }
+        
+        /* FIXED SPACING FOR ARROW */
+        .winner-box { margin-bottom: 60px; text-align: center; min-height: 80px; width: 100%; }
+        
         .winner-label { color: var(--text-dim); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;}
         .winner-name { color: var(--accent); font-size: 1.8rem; font-weight: 800; margin: 0; line-height: 1.2; }
         .winner-mode { font-size: 0.9rem; color: #fff; background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 12px; margin-top: 8px; display: inline-block; border: 1px solid var(--accent); }
@@ -120,7 +102,11 @@
         .pointer { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 35px solid white; z-index: 10; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
         .spin-btn { background: var(--accent); color: white; border: none; padding: 15px 0; border-radius: 10px; font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; cursor: pointer; width: 100%; box-shadow: 0 4px 0 #2a7b56; text-transform: uppercase; }
         .spin-btn:active { transform: translateY(4px); box-shadow: none; }
-        .veto-btn { background: var(--warning); color: #000; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 15px; display: none; width: 100%; animation: popIn 0.3s ease; }
+        
+        .veto-btn { 
+            background: var(--warning); color: #000; border: none; padding: 12px; border-radius: 8px; 
+            font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 20px; display: none; width: 100%; animation: popIn 0.3s ease; 
+        }
 
         /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; display: none; align-items: center; justify-content: center; }
@@ -218,7 +204,7 @@
 <div class="modal-overlay" id="deleteModal">
     <div class="modal-box">
         <div class="modal-title">Delete Game?</div>
-        <p class="modal-desc">This will remove it for everyone in the room.</p>
+        <p class="modal-desc">This will remove it from the room.</p>
         <div class="modal-actions">
             <button class="btn-modal btn-cancel" onclick="closeModal()">Cancel</button>
             <button class="btn-modal btn-confirm" onclick="confirmDelete()">Delete</button>
@@ -252,21 +238,16 @@
 </div>
 
 <script>
-    // --- MQTT & PERSISTENCE LOGIC ---
+    // --- MQTT LOGIC (EMQX Public Broker) ---
     let client = null;
     let roomId = null;
-    // Load local backup immediately on start so list isn't empty while connecting
-    let games = JSON.parse(localStorage.getItem('gameHub_backup_v9')) || [
-        { id: 1, name: "Left 4 Dead 2", category: "steam", modes: [{ name: "Campaign", active: true }, { name: "Versus", active: false }], active: true }
-    ];
+    let games = JSON.parse(localStorage.getItem('gameHub_backup_v10')) || [];
 
-    // Check for saved room
     const savedRoom = localStorage.getItem('gameHub_mqtt_room');
     if(savedRoom && !new URLSearchParams(window.location.search).get('room')) {
         document.getElementById('savedRoomBtn').style.display = 'block';
     }
 
-    // --- ACTIONS ---
     window.createRoom = function() {
         roomId = Math.random().toString(36).substring(2, 6).toUpperCase();
         connectMQTT();
@@ -286,15 +267,13 @@
         document.getElementById('roomCodeDisplay').innerText = "Room: " + roomId;
         window.history.pushState({}, "", `?room=${roomId}`);
 
-        // EMQX Public Broker (Port 8084 is WSS)
+        // EMQX Secure WebSocket (Works better on Mobile)
         client = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
 
         client.on('connect', () => {
             document.getElementById('statusDot').classList.add('connected');
-            // Subscribe to unique room topic
             client.subscribe(`gn_hub_v1/${roomId}/#`);
-            
-            // Ask for update, but don't overwrite if I have data and server has none yet
+            // Load fresh data if available, but dont wipe local yet
             publish('REQUEST_SYNC', {});
         });
 
@@ -303,13 +282,12 @@
             
             if (payload.type === 'UPDATE_LIST') {
                 games = payload.data;
-                localStorage.setItem('gameHub_backup_v9', JSON.stringify(games)); // Back up
+                localStorage.setItem('gameHub_backup_v10', JSON.stringify(games)); // Back up
                 renderList();
                 drawWheel();
             } else if (payload.type === 'SPIN') {
                 performSpinAnimation(payload.rotation);
             } else if (payload.type === 'REQUEST_SYNC') {
-                // If I have data, I share it with the new person
                 if(games.length > 0) publish('UPDATE_LIST', games, true);
             }
         });
@@ -318,7 +296,6 @@
     function publish(type, data, retain = false) {
         if(!client) return;
         const payload = JSON.stringify({ type, data });
-        // Retain = true means the server holds the last message for new people
         client.publish(`gn_hub_v1/${roomId}/data`, payload, { retain: retain });
     }
 
@@ -355,9 +332,7 @@
     }
 
     function updateGameList() {
-        // Save to local storage immediately
-        localStorage.setItem('gameHub_backup_v9', JSON.stringify(games));
-        // Send to network
+        localStorage.setItem('gameHub_backup_v10', JSON.stringify(games));
         publish('UPDATE_LIST', games, true);
         renderList();
         drawWheel();
@@ -404,10 +379,9 @@
                 modesHtml += `</div>`;
             }
 
-            // Desktop
-            const li = document.createElement('li');
-            li.className = 'game-item';
-            li.innerHTML = `
+            const desktopLi = document.createElement('li');
+            desktopLi.className = 'game-item';
+            desktopLi.innerHTML = `
                 <div class="game-main-row">
                     <label class="game-info">
                         <input type="checkbox" ${game.active ? 'checked' : ''} onchange="toggleGame(${game.id})">
@@ -418,7 +392,7 @@
                 </div>
                 ${modesHtml}`;
             const container = document.getElementById(`list-${game.category}`);
-            if(container) container.appendChild(li);
+            if(container) container.appendChild(desktopLi);
 
             // Mobile
             let iconClass = '';
@@ -514,7 +488,6 @@
         }, 2500);
     }
 
-    // Dropdown Logic
     const customSelect = document.querySelector('.custom-select');
     const selectTrigger = document.querySelector('.custom-select-trigger');
     const triggerText = document.getElementById('catTriggerText');
