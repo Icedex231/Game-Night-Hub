@@ -24,10 +24,9 @@
             font-weight: bold; margin-bottom: 10px; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; cursor: pointer;
             box-shadow: 0 4px 10px rgba(114, 137, 218, 0.3); border: 1px solid rgba(255,255,255,0.1);
         }
-        /* STATUS DOT */
-        .status-dot { width: 12px; height: 12px; background: #ed4245; border-radius: 50%; box-shadow: 0 0 8px #ed4245; transition: 0.3s; border: 2px solid rgba(255,255,255,0.2); }
-        .status-dot.connected { background: #43b581; box-shadow: 0 0 8px #43b581; }
-        .status-dot.activity { background: #faa61a; box-shadow: 0 0 8px #faa61a; }
+        /* STATUS DOT - Always Green for Dweet as it's stateless */
+        .status-dot { width: 12px; height: 12px; background: #43b581; border-radius: 50%; box-shadow: 0 0 8px #43b581; transition: 0.3s; border: 2px solid rgba(255,255,255,0.2); }
+        .status-dot.activity { background: #fff; box-shadow: 0 0 15px #fff; }
 
         .main-title {
             font-size: 3rem; font-weight: 900; text-transform: uppercase; letter-spacing: 5px;
@@ -38,12 +37,14 @@
         .dashboard { display: grid; grid-template-columns: 1fr 380px; gap: 20px; width: 100%; max-width: 1300px; align-items: start; }
         .section-library { display: flex; flex-direction: column; gap: 15px; }
 
+        /* ADD PANEL */
         .add-panel { background: var(--glass); padding: 20px; border-radius: 12px; display: flex; gap: 12px; flex-wrap: nowrap; border: 1px solid #333; position: relative; z-index: 20; align-items: flex-end; }
         .input-group { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
         .input-label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; font-weight: bold; margin-left: 2px; white-space: nowrap;}
         .modern-input { background: var(--input-bg); border: 1px solid #40444b; color: white; padding: 12px; border-radius: 8px; font-size: 0.95rem; outline: none; width: 100%; }
         .modern-input:focus { border-color: var(--primary); }
 
+        /* DROPDOWN */
         .custom-select-wrapper { position: relative; user-select: none; width: 100%; }
         .custom-select-trigger { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 12px; font-size: 0.95rem; background: var(--input-bg); border: 1px solid #40444b; border-radius: 8px; cursor: pointer; white-space: nowrap; }
         .custom-options { position: absolute; display: none; top: 100%; left: 0; right: 0; background: #202225; border: 1px solid #40444b; z-index: 50; border-radius: 8px; margin-top: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
@@ -55,6 +56,7 @@
         
         .btn-add { background: var(--primary); color: white; border: none; width: 50px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; height: 42px; flex-shrink: 0; }
 
+        /* LAYOUTS */
         .desktop-view-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
         .cat-card { background: var(--glass); border: 1px solid #333; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; height: 500px; min-width: 0; }
         .cat-header { padding: 15px; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; white-space: nowrap; }
@@ -64,6 +66,7 @@
         .library-card { background: var(--glass); border: 1px solid #333; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; height: 500px; }
         .library-header { padding: 15px 20px; background: rgba(0,0,0,0.2); border-bottom: 1px solid #333; color: var(--text-dim); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; }
 
+        /* ITEMS */
         .game-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; }
         .game-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 8px; }
         .game-main-row { display: flex; align-items: center; justify-content: space-between; width: 100%; }
@@ -72,6 +75,7 @@
         .cat-icon { width: 30px; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; }
         .icon-steam { color: var(--steam); } .icon-roblox { color: var(--roblox); } .icon-web { color: var(--web); }
 
+        /* EMPTY CHECKBOXES */
         .custom-check { width: 20px; height: 20px; border: 2px solid #4f545c; border-radius: 4px; display: grid; place-items: center; flex-shrink: 0; background: transparent; }
         .custom-check i { opacity: 0; transform: scale(0.5); transition: 0.2s; }
         input[type="checkbox"] { display: none; }
@@ -88,14 +92,27 @@
 
         .delete-btn { background: none; border: none; color: var(--danger); opacity: 0.5; cursor: pointer; padding: 5px; font-size: 1rem; }
 
+        /* WHEEL AREA */
         .section-wheel { position: sticky; top: 10px; background: #2f3136; padding: 25px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; border: 1px solid #333; z-index: 5; transform: translateZ(0); }
         .winner-box { margin-bottom: 50px; text-align: center; min-height: 80px; width: 100%; }
         .winner-label { color: var(--text-dim); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;}
         .winner-name { color: var(--accent); font-size: 1.8rem; font-weight: 800; margin: 0; line-height: 1.2; }
         .winner-mode { font-size: 0.9rem; color: #fff; background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 12px; margin-top: 8px; display: inline-block; border: 1px solid var(--accent); }
+        
+        /* WHEEL CANVAS */
         .wheel-container { position: relative; width: 100%; max-width: 320px; aspect-ratio: 1/1; margin-bottom: 25px; }
-        canvas { width: 100%; height: 100%; border-radius: 50%; transition: transform 2.5s cubic-bezier(0.1, 0, 0.2, 1); will-change: transform; }
-        .pointer { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 35px solid white; z-index: 10; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        canvas { width: 100%; height: 100%; border-radius: 50%; transition: transform 3s cubic-bezier(0.1, 0, 0.2, 1); will-change: transform; border: 4px solid white; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        
+        /* POINTER */
+        .pointer { 
+            position: absolute; top: -25px; left: 50%; transform: translateX(-50%); 
+            width: 0; height: 0; 
+            border-left: 20px solid transparent; 
+            border-right: 20px solid transparent; 
+            border-top: 40px solid white; 
+            z-index: 10; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+        }
+
         .spin-btn { background: var(--accent); color: white; border: none; padding: 15px 0; border-radius: 10px; font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; cursor: pointer; width: 100%; box-shadow: 0 4px 0 #2a7b56; text-transform: uppercase; }
         .spin-btn:active { transform: translateY(4px); box-shadow: none; }
         .veto-btn { background: var(--warning); color: #000; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 20px; display: none; width: 100%; animation: popIn 0.3s ease; }
@@ -125,11 +142,10 @@
 </head>
 <body>
 
-<div class="room-bar" id="roomBar">
+<div class="room-bar" id="roomBar" onclick="copyRoomLink()">
     <div class="status-dot" id="statusDot"></div>
     <span id="roomCodeDisplay">Connecting...</span>
-    <button class="btn-add" style="height: 30px; width: 30px; font-size: 0.8rem; margin: 0; background: rgba(255,255,255,0.1);" onclick="copyRoomLink()" title="Copy Link"><i class="fas fa-copy"></i></button>
-    <button class="btn-add" style="height: 30px; width: 30px; font-size: 0.8rem; margin: 0; background: rgba(255,255,255,0.1);" onclick="forceSync()" title="Force Sync"><i class="fas fa-sync"></i></button>
+    <i class="fas fa-copy" style="margin-left:auto; opacity:0.6;"></i>
 </div>
 
 <h1 class="main-title">GAME NIGHT IDEAS</h1>
@@ -197,7 +213,7 @@
 <div class="modal-overlay" id="deleteModal">
     <div class="modal-box">
         <div class="modal-title">Delete Game?</div>
-        <p class="modal-desc">This will remove it for everyone in the room.</p>
+        <p class="modal-desc">This will remove it from the room.</p>
         <div class="modal-actions">
             <button class="btn-modal btn-cancel" onclick="closeModal()">Cancel</button>
             <button class="btn-modal btn-confirm" onclick="confirmDelete()">Delete</button>
@@ -231,23 +247,88 @@
 </div>
 
 <script>
-    // --- DWEET.IO LOGIC (HTTP polling - Bulletproof) ---
-    // Splitting Channels: 
-    // 1. DATA Channel: "gn_data_[ROOM]" (Holds game list)
-    // 2. ACTION Channel: "gn_act_[ROOM]" (Holds spin actions)
+    // --- DWEET.IO LOGIC (HTTP polling - Works everywhere) ---
+    // Dual Channel: DATA (games) and ACTIONS (spin)
     
     let roomId = null;
-    let games = JSON.parse(localStorage.getItem('gameHub_backup_v12')) || [];
+    let games = JSON.parse(localStorage.getItem('gameHub_backup_v13')) || [];
     let lastActTimestamp = 0;
     let pollInterval = null;
 
-    // 1. Check for Saved Room
+    // 1. Initial State
     const savedRoom = localStorage.getItem('gameHub_room_id');
     if(savedRoom && !new URLSearchParams(window.location.search).get('room')) {
         document.getElementById('savedRoomBtn').style.display = 'block';
     }
 
-    // 2. Room Setup
+    // 2. Network Functions
+    function sendData(newGames) {
+        const dweetName = `gn_data_${roomId}`;
+        const payload = { games: newGames, timestamp: Date.now() };
+        
+        fetch(`https://dweet.io/dweet/for/${dweetName}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).then(() => { flashStatus(); });
+    }
+
+    function sendAction(actionType, data) {
+        const dweetName = `gn_act_${roomId}`;
+        const payload = { type: actionType, data: data, timestamp: Date.now() };
+        
+        fetch(`https://dweet.io/dweet/for/${dweetName}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+    }
+
+    function startListening() {
+        if(pollInterval) clearInterval(pollInterval);
+        
+        // Poll every 1s
+        pollInterval = setInterval(() => {
+            // Check Data
+            fetch(`https://dweet.io/get/latest/dweet/for/gn_data_${roomId}`)
+                .then(res => res.json())
+                .then(res => {
+                    if(res.this === 'succeeded' && res.with.length > 0) {
+                        const remoteGames = res.with[0].content.games;
+                        if(JSON.stringify(remoteGames) !== JSON.stringify(games)) {
+                            games = remoteGames || [];
+                            localStorage.setItem('gameHub_backup_v13', JSON.stringify(games));
+                            renderList();
+                            drawWheel();
+                            flashStatus();
+                        }
+                    }
+                }).catch(e=>{});
+
+            // Check Actions
+            fetch(`https://dweet.io/get/latest/dweet/for/gn_act_${roomId}`)
+                .then(res => res.json())
+                .then(res => {
+                    if(res.this === 'succeeded' && res.with.length > 0) {
+                        const content = res.with[0].content;
+                        if(content.timestamp > lastActTimestamp) {
+                            lastActTimestamp = content.timestamp;
+                            if(content.type === 'SPIN') {
+                                performSpinAnimation(content.data.rotation);
+                            }
+                        }
+                    }
+                }).catch(e=>{});
+        }, 1000);
+    }
+
+    function flashStatus() {
+        const dot = document.getElementById('statusDot');
+        dot.classList.add('activity');
+        setTimeout(() => dot.classList.remove('activity'), 500);
+    }
+
+    // 3. Room Management
     window.createRoom = function() {
         roomId = Math.random().toString(36).substring(2, 7).toUpperCase();
         enterRoom();
@@ -269,104 +350,12 @@
         document.getElementById('roomCodeDisplay').innerText = "Room: " + roomId;
         window.history.pushState({}, "", `?room=${roomId}`);
         
-        // Initial Draw
         renderList();
         drawWheel();
-        
-        // Start Loops
         startListening();
         
-        // Check for existing data immediately
-        checkCloudData();
-    }
-
-    // 3. Network Functions (Dweet)
-    function sendData(newGames) {
-        // Channel 1: DATA (Game List)
-        const dweetName = `gn_data_${roomId}`;
-        const payload = { games: newGames, timestamp: Date.now() };
-        
-        fetch(`https://dweet.io/dweet/for/${dweetName}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        }).then(() => {
-            flashStatus();
-        });
-    }
-
-    function sendAction(actionType, data) {
-        // Channel 2: ACTIONS (Spin, etc)
-        const dweetName = `gn_act_${roomId}`;
-        const payload = { type: actionType, data: data, timestamp: Date.now() };
-        
-        fetch(`https://dweet.io/dweet/for/${dweetName}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-    }
-
-    function startListening() {
-        if(pollInterval) clearInterval(pollInterval);
-        document.getElementById('statusDot').classList.add('connected');
-        
-        pollInterval = setInterval(() => {
-            checkCloudActions(); // Fast poll for spins
-            // We check data less frequently to save bandwidth? No, keeps simple.
-            checkCloudData();
-        }, 1500); 
-    }
-
-    function checkCloudData() {
-        fetch(`https://dweet.io/get/latest/dweet/for/gn_data_${roomId}`)
-            .then(res => res.json())
-            .then(res => {
-                if(res.this === 'succeeded' && res.with.length > 0) {
-                    const remoteGames = res.with[0].content.games;
-                    // Simple sync: If remote list is different length or we just joined
-                    // In a real app we'd compare timestamps, but for this, simpler is better.
-                    // We only overwrite if we are NOT the one editing right now.
-                    // Let's just trust the cloud.
-                    if(JSON.stringify(remoteGames) !== JSON.stringify(games)) {
-                        games = remoteGames || [];
-                        localStorage.setItem('gameHub_backup_v12', JSON.stringify(games));
-                        renderList();
-                        drawWheel();
-                        flashStatus();
-                    }
-                }
-            })
-            .catch(e => {}); // Silent fail
-    }
-
-    function checkCloudActions() {
-        fetch(`https://dweet.io/get/latest/dweet/for/gn_act_${roomId}`)
-            .then(res => res.json())
-            .then(res => {
-                if(res.this === 'succeeded' && res.with.length > 0) {
-                    const content = res.with[0].content;
-                    if(content.timestamp > lastActTimestamp) {
-                        lastActTimestamp = content.timestamp;
-                        if(content.type === 'SPIN') {
-                            performSpinAnimation(content.data.rotation);
-                        }
-                    }
-                }
-            })
-            .catch(e => {});
-    }
-
-    function flashStatus() {
-        const dot = document.getElementById('statusDot');
-        dot.classList.add('activity');
-        setTimeout(() => dot.classList.remove('activity'), 500);
-    }
-
-    window.forceSync = function() {
-        // Push local data to cloud
-        sendData(games);
-        alert("Synced local list to room!");
+        // Initial push if I am creator
+        if(games.length > 0) sendData(games);
     }
 
     // 4. Game Logic
@@ -385,31 +374,27 @@
         document.getElementById('inName').value = '';
         document.getElementById('inModes').value = '';
         
-        // Update Local & Cloud
-        localStorage.setItem('gameHub_backup_v12', JSON.stringify(games));
-        renderList();
-        drawWheel();
-        sendData(games);
+        updateList();
     }
 
     window.toggleGame = function(id) {
         const g = games.find(x => x.id == id);
-        if(g) { 
-            g.active = !g.active; 
-            localStorage.setItem('gameHub_backup_v12', JSON.stringify(games));
-            sendData(games);
-            renderList(); // Re-render to show checkbox state immediately
-            drawWheel();
-        }
+        if(g) { g.active = !g.active; updateList(); }
     }
 
     window.toggleMode = function(id, mIdx) {
         const g = games.find(x => x.id == id);
         if(g && g.modes[mIdx]) {
             g.modes[mIdx].active = !g.modes[mIdx].active;
-            localStorage.setItem('gameHub_backup_v12', JSON.stringify(games));
-            sendData(games);
+            updateList();
         }
+    }
+
+    function updateList() {
+        localStorage.setItem('gameHub_backup_v13', JSON.stringify(games));
+        renderList();
+        drawWheel();
+        sendData(games);
     }
 
     let deleteId = null;
@@ -421,10 +406,7 @@
     window.confirmDelete = function() {
         if(deleteId) {
             games = games.filter(g => g.id !== deleteId);
-            localStorage.setItem('gameHub_backup_v12', JSON.stringify(games));
-            renderList();
-            drawWheel();
-            sendData(games);
+            updateList();
         }
         closeModal();
     }
@@ -435,71 +417,7 @@
         });
     };
 
-    // 5. Render Logic
-    function renderList() {
-        const counts = { steam: 0, roblox: 0, web: 0 };
-        document.getElementById('list-steam').innerHTML = '';
-        document.getElementById('list-roblox').innerHTML = '';
-        document.getElementById('list-web').innerHTML = '';
-        const unified = document.getElementById('unified-game-list');
-        unified.innerHTML = '';
-        document.getElementById('total-count').innerText = games.length + " Games";
-
-        games.forEach((game, index) => {
-            counts[game.category]++;
-            let modesHtml = '';
-            if (game.modes && game.modes.length > 0) {
-                modesHtml = `<div class="mode-list">`;
-                game.modes.forEach((mode, mIdx) => {
-                    modesHtml += `<label class="mode-item"><input type="checkbox" ${mode.active ? 'checked' : ''} onchange="toggleMode(${game.id}, ${mIdx})"><div class="mode-check"><i class="fas fa-check"></i></div><span class="mode-name">${mode.name}</span></label>`;
-                });
-                modesHtml += `</div>`;
-            }
-
-            // Desktop
-            const desktopLi = document.createElement('li');
-            desktopLi.className = 'game-item';
-            desktopLi.innerHTML = `
-                <div class="game-main-row">
-                    <label class="game-info">
-                        <input type="checkbox" ${game.active ? 'checked' : ''} onchange="toggleGame(${game.id})">
-                        <div class="custom-check"><i class="fas fa-check" style="font-size:12px;"></i></div>
-                        <span class="game-name">${game.name}</span>
-                    </label>
-                    <button class="delete-btn" onclick="openDeleteModal(${index})"><i class="fas fa-trash"></i></button>
-                </div>
-                ${modesHtml}`;
-            const container = document.getElementById(`list-${game.category}`);
-            if(container) container.appendChild(desktopLi);
-
-            // Mobile
-            let iconClass = '';
-            if(game.category === 'steam') iconClass = 'fab fa-steam icon-steam';
-            if(game.category === 'roblox') iconClass = 'fas fa-cube icon-roblox';
-            if(game.category === 'web') iconClass = 'fas fa-globe icon-web';
-            
-            const mLi = document.createElement('li');
-            mLi.className = 'game-item';
-            mLi.innerHTML = `
-                <div class="game-main-row">
-                    <label class="game-info">
-                        <input type="checkbox" ${game.active ? 'checked' : ''} onchange="toggleGame(${game.id})">
-                        <div class="custom-check"><i class="fas fa-check" style="font-size:12px;"></i></div>
-                        <div class="cat-icon"><i class="${iconClass}"></i></div>
-                        <span class="game-name">${game.name}</span>
-                    </label>
-                    <button class="delete-btn" onclick="openDeleteModal(${index})"><i class="fas fa-trash"></i></button>
-                </div>
-                ${modesHtml}`;
-            unified.appendChild(mLi);
-        });
-
-        document.getElementById('count-steam').innerText = counts.steam;
-        document.getElementById('count-roblox').innerText = counts.roblox;
-        document.getElementById('count-web').innerText = counts.web;
-    }
-
-    // 6. Wheel Logic
+    // 5. Wheel Logic
     const canvas = document.getElementById('wheelCanvas');
     const ctx = canvas.getContext('2d');
     let currentRotation = 0;
@@ -511,13 +429,34 @@
         const rect = canvas.getBoundingClientRect();
         if (canvas.width !== rect.width * dpr) { canvas.width = rect.width * dpr; canvas.height = rect.height * dpr; ctx.scale(dpr, dpr); }
         const w = rect.width; const cx = w / 2; const radius = (w / 2) - 10;
+        
         ctx.clearRect(0, 0, w, w);
-        if (activeGames.length === 0) { ctx.beginPath(); ctx.arc(cx, cx, radius, 0, Math.PI * 2); ctx.strokeStyle = "#444"; ctx.lineWidth = 4; ctx.stroke(); return; }
+        
+        if (activeGames.length === 0) return;
+
         const arc = (Math.PI * 2) / activeGames.length;
         activeGames.forEach((game, i) => {
             const angle = i * arc;
             ctx.beginPath(); ctx.moveTo(cx, cx); ctx.arc(cx, cx, radius, angle, angle + arc); ctx.fillStyle = catColors[game.category]; ctx.fill(); ctx.stroke();
-            ctx.save(); ctx.translate(cx, cx); ctx.rotate(angle + arc / 2); ctx.textAlign = "right"; ctx.fillStyle = "white"; ctx.font = "bold 16px Arial"; ctx.fillText(game.name, radius - 20, 5); ctx.restore();
+            
+            // Text logic
+            ctx.save();
+            ctx.translate(cx, cx);
+            ctx.rotate(angle + arc / 2);
+            ctx.textAlign = "right";
+            ctx.fillStyle = "white";
+            ctx.font = "bold 16px Arial";
+            
+            // Flip text if on left side
+            const theta = (angle + arc / 2);
+            if (theta > Math.PI / 2 && theta < 3 * Math.PI / 2) {
+                ctx.rotate(Math.PI);
+                ctx.textAlign = "left";
+                ctx.fillText(game.name, -radius + 20, 5);
+            } else {
+                ctx.fillText(game.name, radius - 20, 5);
+            }
+            ctx.restore();
         });
     }
 
@@ -526,8 +465,6 @@
         const randomDeg = Math.floor(Math.random() * 360);
         const totalDeg = (spins * 360) + randomDeg;
         const newRot = currentRotation + totalDeg;
-        
-        // Send Action to Cloud
         sendAction('SPIN', { rotation: newRot });
     }
 
@@ -565,10 +502,10 @@
             document.getElementById('vetoBtn').style.display = 'block';
             document.getElementById('mainSpinBtn').disabled = false;
             document.getElementById('mainSpinBtn').style.opacity = "1";
-        }, 2500);
+        }, 3000);
     }
 
-    // Dropdown
+    // Dropdown Logic
     const customSelect = document.querySelector('.custom-select');
     const selectTrigger = document.querySelector('.custom-select-trigger');
     const triggerText = document.getElementById('catTriggerText');
@@ -588,6 +525,47 @@
     window.addEventListener('click', (e) => {
         if (!customSelect.contains(e.target)) customSelect.classList.remove('open');
     });
+
+    // Render Lists (Copied for brevity, same as before but uses 'games')
+    function renderList() {
+        const counts = { steam: 0, roblox: 0, web: 0 };
+        document.getElementById('list-steam').innerHTML = '';
+        document.getElementById('list-roblox').innerHTML = '';
+        document.getElementById('list-web').innerHTML = '';
+        const unified = document.getElementById('unified-game-list');
+        unified.innerHTML = '';
+        document.getElementById('total-count').innerText = games.length + " Games";
+
+        games.forEach((game, index) => {
+            counts[game.category]++;
+            let modesHtml = '';
+            if (game.modes && game.modes.length > 0) {
+                modesHtml = `<div class="mode-list">`;
+                game.modes.forEach((mode, mIdx) => {
+                    modesHtml += `<label class="mode-item"><input type="checkbox" ${mode.active ? 'checked' : ''} onchange="toggleMode(${game.id}, ${mIdx})"><div class="mode-check"><i class="fas fa-check"></i></div><span class="mode-name">${mode.name}</span></label>`;
+                });
+                modesHtml += `</div>`;
+            }
+
+            const desktopLi = document.createElement('li');
+            desktopLi.className = 'game-item';
+            desktopLi.innerHTML = `<div class="game-main-row"><label class="game-info"><input type="checkbox" ${game.active ? 'checked' : ''} onchange="toggleGame(${game.id})"><div class="custom-check"><i class="fas fa-check" style="font-size:12px;"></i></div><span class="game-name">${game.name}</span></label><button class="delete-btn" onclick="openDeleteModal(${index})"><i class="fas fa-trash"></i></button></div>${modesHtml}`;
+            const container = document.getElementById(`list-${game.category}`);
+            if(container) container.appendChild(desktopLi);
+
+            const mLi = document.createElement('li');
+            let iconClass = '';
+            if(game.category === 'steam') iconClass = 'fab fa-steam icon-steam';
+            if(game.category === 'roblox') iconClass = 'fas fa-cube icon-roblox';
+            if(game.category === 'web') iconClass = 'fas fa-globe icon-web';
+            mLi.className = 'game-item';
+            mLi.innerHTML = `<div class="game-main-row"><label class="game-info"><input type="checkbox" ${game.active ? 'checked' : ''} onchange="toggleGame(${game.id})"><div class="custom-check"><i class="fas fa-check" style="font-size:12px;"></i></div><div class="cat-icon"><i class="${iconClass}"></i></div><span class="game-name">${game.name}</span></label><button class="delete-btn" onclick="openDeleteModal(${index})"><i class="fas fa-trash"></i></button></div>${modesHtml}`;
+            unified.appendChild(mLi);
+        });
+        document.getElementById('count-steam').innerText = counts.steam;
+        document.getElementById('count-roblox').innerText = counts.roblox;
+        document.getElementById('count-web').innerText = counts.web;
+    }
 
     window.onload = () => { renderList(); drawWheel(); };
     window.onresize = drawWheel;
