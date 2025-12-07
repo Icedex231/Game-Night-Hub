@@ -19,13 +19,19 @@
         body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; align-items: center; }
         @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
+        /* ROOM BAR */
         .room-bar {
             background: var(--primary); color: white; padding: 8px 15px; border-radius: 20px;
             font-weight: bold; margin-bottom: 10px; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; cursor: pointer;
-            box-shadow: 0 4px 10px rgba(114, 137, 218, 0.3); width: fit-content;
+            box-shadow: 0 4px 10px rgba(114, 137, 218, 0.3);
         }
-        .status-dot { width: 10px; height: 10px; background: #ed4245; border-radius: 50%; box-shadow: 0 0 5px #ed4245; transition: 0.3s; }
-        .status-dot.connected { background: #43b581; box-shadow: 0 0 5px #43b581; }
+        
+        /* STATUS DOT */
+        .status-dot { 
+            width: 12px; height: 12px; background: #ed4245; border-radius: 50%; 
+            box-shadow: 0 0 8px #ed4245; transition: 0.3s; border: 2px solid rgba(255,255,255,0.2);
+        }
+        .status-dot.connected { background: #43b581; box-shadow: 0 0 8px #43b581; }
 
         .main-title {
             font-size: 3rem; font-weight: 900; text-transform: uppercase; letter-spacing: 5px;
@@ -36,6 +42,7 @@
         .dashboard { display: grid; grid-template-columns: 1fr 380px; gap: 20px; width: 100%; max-width: 1300px; align-items: start; }
         .section-library { display: flex; flex-direction: column; gap: 15px; }
 
+        /* INPUT PANEL */
         .add-panel {
             background: var(--glass); padding: 20px; border-radius: 12px; display: flex; gap: 12px;
             flex-wrap: nowrap; border: 1px solid #333; position: relative; z-index: 20; align-items: flex-end;
@@ -63,7 +70,7 @@
         
         .btn-add { background: var(--primary); color: white; border: none; width: 50px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; height: 42px; flex-shrink: 0; }
 
-        /* Layouts */
+        /* DESKTOP LAYOUT (3 Col) */
         .desktop-view-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
         .cat-card { background: var(--glass); border: 1px solid #333; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; height: 500px; min-width: 0; }
         .cat-header { padding: 15px; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; white-space: nowrap; }
@@ -71,11 +78,12 @@
         .cat-header.roblox { border-left: 4px solid var(--roblox); }
         .cat-header.web { border-left: 4px solid var(--web); }
 
+        /* MOBILE LAYOUT (Unified) */
         .mobile-view-container { display: none; flex-direction: column; }
         .library-card { background: var(--glass); border: 1px solid #333; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; height: 500px; }
         .library-header { padding: 15px 20px; background: rgba(0,0,0,0.2); border-bottom: 1px solid #333; color: var(--text-dim); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; }
 
-        /* Items */
+        /* ITEMS */
         .game-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; }
         .game-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 8px; }
         .game-main-row { display: flex; align-items: center; justify-content: space-between; width: 100%; }
@@ -84,7 +92,7 @@
         .cat-icon { width: 30px; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; }
         .icon-steam { color: var(--steam); } .icon-roblox { color: var(--roblox); } .icon-web { color: var(--web); }
 
-        /* FIXED EMPTY CHECKBOXES */
+        /* CHECKBOXES */
         .custom-check { width: 20px; height: 20px; border: 2px solid #4f545c; border-radius: 4px; display: grid; place-items: center; flex-shrink: 0; background: transparent; }
         .custom-check i { opacity: 0; transform: scale(0.5); transition: 0.2s; }
         input[type="checkbox"] { display: none; }
@@ -101,7 +109,7 @@
 
         .delete-btn { background: none; border: none; color: var(--danger); opacity: 0.5; cursor: pointer; padding: 5px; font-size: 1rem; }
 
-        /* WHEEL AREA */
+        /* WHEEL */
         .section-wheel { position: sticky; top: 10px; background: #2f3136; padding: 25px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; border: 1px solid #333; z-index: 5; transform: translateZ(0); }
         .winner-box { margin-bottom: 50px; text-align: center; min-height: 80px; width: 100%; }
         .winner-label { color: var(--text-dim); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;}
@@ -210,7 +218,7 @@
 <div class="modal-overlay" id="deleteModal">
     <div class="modal-box">
         <div class="modal-title">Delete Game?</div>
-        <p class="modal-desc">This will remove it from the room.</p>
+        <p class="modal-desc">This will remove it for everyone in the room.</p>
         <div class="modal-actions">
             <button class="btn-modal btn-cancel" onclick="closeModal()">Cancel</button>
             <button class="btn-modal btn-confirm" onclick="confirmDelete()">Delete</button>
@@ -244,17 +252,21 @@
 </div>
 
 <script>
-    // --- MQTT LOGIC (Reliable Public Broker) ---
+    // --- MQTT & PERSISTENCE LOGIC ---
     let client = null;
     let roomId = null;
-    let games = []; // Data Store
+    // Load local backup immediately on start so list isn't empty while connecting
+    let games = JSON.parse(localStorage.getItem('gameHub_backup_v9')) || [
+        { id: 1, name: "Left 4 Dead 2", category: "steam", modes: [{ name: "Campaign", active: true }, { name: "Versus", active: false }], active: true }
+    ];
 
-    // Check LocalStorage on load
+    // Check for saved room
     const savedRoom = localStorage.getItem('gameHub_mqtt_room');
     if(savedRoom && !new URLSearchParams(window.location.search).get('room')) {
         document.getElementById('savedRoomBtn').style.display = 'block';
     }
 
+    // --- ACTIONS ---
     window.createRoom = function() {
         roomId = Math.random().toString(36).substring(2, 6).toUpperCase();
         connectMQTT();
@@ -274,24 +286,31 @@
         document.getElementById('roomCodeDisplay').innerText = "Room: " + roomId;
         window.history.pushState({}, "", `?room=${roomId}`);
 
-        // Connect to HiveMQ Public WebSocket
-        client = mqtt.connect('wss://broker.hivemq.com:8000/mqtt');
+        // EMQX Public Broker (Port 8084 is WSS)
+        client = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
 
         client.on('connect', () => {
             document.getElementById('statusDot').classList.add('connected');
             // Subscribe to unique room topic
-            client.subscribe(`gn_hub_v1/${roomId}`);
+            client.subscribe(`gn_hub_v1/${roomId}/#`);
+            
+            // Ask for update, but don't overwrite if I have data and server has none yet
+            publish('REQUEST_SYNC', {});
         });
 
         client.on('message', (topic, message) => {
             const payload = JSON.parse(message.toString());
-            // Sync Logic
+            
             if (payload.type === 'UPDATE_LIST') {
                 games = payload.data;
+                localStorage.setItem('gameHub_backup_v9', JSON.stringify(games)); // Back up
                 renderList();
                 drawWheel();
             } else if (payload.type === 'SPIN') {
                 performSpinAnimation(payload.rotation);
+            } else if (payload.type === 'REQUEST_SYNC') {
+                // If I have data, I share it with the new person
+                if(games.length > 0) publish('UPDATE_LIST', games, true);
             }
         });
     }
@@ -299,8 +318,8 @@
     function publish(type, data, retain = false) {
         if(!client) return;
         const payload = JSON.stringify({ type, data });
-        // RETAIN: TRUE is crucial. It means "Hold this message for new people"
-        client.publish(`gn_hub_v1/${roomId}`, payload, { retain: retain });
+        // Retain = true means the server holds the last message for new people
+        client.publish(`gn_hub_v1/${roomId}/data`, payload, { retain: retain });
     }
 
     // --- GAME ACTIONS ---
@@ -319,20 +338,29 @@
         document.getElementById('inName').value = '';
         document.getElementById('inModes').value = '';
         
-        publish('UPDATE_LIST', games, true); // Retain list for new joiners
+        updateGameList();
     }
 
     window.toggleGame = function(id) {
         const g = games.find(x => x.id == id);
-        if(g) { g.active = !g.active; publish('UPDATE_LIST', games, true); }
+        if(g) { g.active = !g.active; updateGameList(); }
     }
 
     window.toggleMode = function(id, mIdx) {
         const g = games.find(x => x.id == id);
         if(g && g.modes[mIdx]) {
             g.modes[mIdx].active = !g.modes[mIdx].active;
-            publish('UPDATE_LIST', games, true);
+            updateGameList();
         }
+    }
+
+    function updateGameList() {
+        // Save to local storage immediately
+        localStorage.setItem('gameHub_backup_v9', JSON.stringify(games));
+        // Send to network
+        publish('UPDATE_LIST', games, true);
+        renderList();
+        drawWheel();
     }
 
     let deleteId = null;
@@ -344,7 +372,7 @@
     window.confirmDelete = function() {
         if(deleteId) {
             games = games.filter(g => g.id !== deleteId);
-            publish('UPDATE_LIST', games, true);
+            updateGameList();
         }
         closeModal();
     }
@@ -486,11 +514,7 @@
         }, 2500);
     }
 
-    // Auto-Run if URL has room
-    const urlRoom = new URLSearchParams(window.location.search).get('room');
-    if(urlRoom) { roomId = urlRoom.toUpperCase(); connectMQTT(); }
-
-    // Dropdown
+    // Dropdown Logic
     const customSelect = document.querySelector('.custom-select');
     const selectTrigger = document.querySelector('.custom-select-trigger');
     const triggerText = document.getElementById('catTriggerText');
