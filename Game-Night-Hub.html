@@ -6,7 +6,7 @@
     <title>Game Night Hub</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     
     <style>
         :root {
@@ -212,7 +212,7 @@
 <div class="modal-overlay" id="deleteModal">
     <div class="modal-box">
         <div class="modal-title">Delete Game?</div>
-        <p class="modal-desc">This will remove it for everyone in the room.</p>
+        <p class="modal-desc">This will remove it from the list.</p>
         <div class="modal-actions">
             <button class="btn-modal btn-cancel" onclick="closeModal()">Cancel</button>
             <button class="btn-modal btn-confirm" onclick="confirmDelete()">Delete</button>
@@ -238,135 +238,99 @@
             <input type="text" id="joinCodeInput" class="modern-input" placeholder="ROOM CODE" style="text-align:center; letter-spacing: 2px; text-transform:uppercase;">
             <button class="btn-add" style="margin:0; width: auto; padding: 0 20px;" onclick="joinRoom()">JOIN</button>
         </div>
+        <div id="savedRoomBtn" style="margin-top:20px; display:none;">
+            <p style="font-size:0.8rem; color:#666; margin-bottom:5px;">FOUND SAVED ROOM:</p>
+            <button class="spin-btn" style="background:#2f3136; font-size:0.9rem;" onclick="joinSaved()">REJOIN LAST ROOM</button>
+        </div>
     </div>
 </div>
 
 <script>
-    // --- PEERJS LOGIC (No Database) ---
-    let peer = null;
-    let conn = null;
-    let myId = null;
-    let hostConnection = null;
-    let isHost = false;
-    let connections = []; // For Host
+    // --- MQTT LOGIC (Public Cloud - No API Key Needed) ---
+    let client = null;
+    let roomId = null;
+    let games = []; // Data Store
 
-    // Data Store
-    let games = JSON.parse(localStorage.getItem('gameHub_local_v8')) || [
-        { id: 1, name: "Left 4 Dead 2", category: "steam", modes: [{ name: "Campaign", active: true }, { name: "Versus", active: false }], active: true }
-    ];
-
-    function initPeer(id = null) {
-        peer = new Peer(id);
-        
-        peer.on('open', (id) => {
-            myId = id;
-            document.getElementById('roomCodeDisplay').innerText = "Room ID: " + id;
-            document.getElementById('statusDot').classList.add('connected');
-            document.getElementById('landingModal').classList.remove('active');
-            
-            // If we created a room (Host), we save local games
-            if(isHost) {
-                renderList();
-                drawWheel();
-            }
-        });
-
-        peer.on('connection', (c) => {
-            // HOST LOGIC: Receive connection
-            connections.push(c);
-            setupConnection(c);
-            // Send current state to new guest
-            setTimeout(() => {
-                c.send({ type: 'SYNC_LIST', data: games });
-            }, 500);
-        });
-
-        peer.on('error', (err) => {
-            alert("Room ID not found or connection error.");
-            location.reload();
-        });
+    // 1. Check for Saved Room
+    const savedRoom = localStorage.getItem('gameHub_mqtt_room');
+    if(savedRoom && !new URLSearchParams(window.location.search).get('room')) {
+        document.getElementById('savedRoomBtn').style.display = 'block';
     }
 
-    function connectToHost(hostId) {
-        isHost = false;
-        peer = new Peer();
-        peer.on('open', (id) => {
-            myId = id;
-            hostConnection = peer.connect(hostId);
-            setupConnection(hostConnection);
-            
-            document.getElementById('roomCodeDisplay').innerText = "Connected to: " + hostId;
-            document.getElementById('statusDot').classList.add('connected');
-            document.getElementById('landingModal').classList.remove('active');
-        });
-    }
-
-    function setupConnection(c) {
-        c.on('data', (data) => {
-            handleData(data);
-            // If Host receives data, broadcast to others
-            if(isHost) broadcast(data, c.peer); 
-        });
-    }
-
-    function broadcast(data, excludePeerId) {
-        connections.forEach(c => {
-            if(c.peer !== excludePeerId) c.send(data);
-        });
-    }
-
-    function handleData(payload) {
-        if(payload.type === 'SYNC_LIST') {
-            games = payload.data;
-            saveLocal();
-        }
-        if(payload.type === 'SPIN') {
-            performSpinAnimation(payload.rotation);
-        }
-    }
-
-    function sendUpdate(type, data) {
-        const payload = { type, data };
-        if(isHost) {
-            broadcast(payload, null);
-        } else if(hostConnection) {
-            hostConnection.send(payload);
-        }
-    }
-
-    // --- ROOM ACTIONS ---
+    // 2. Room Functions
     window.createRoom = function() {
-        isHost = true;
-        // Generate a random 4-char ID? PeerJS usually uses long IDs. 
-        // Let's use PeerJS default ID generation for reliability.
-        initPeer(); 
+        roomId = Math.random().toString(36).substring(2, 6).toUpperCase();
+        initMQTT();
     };
 
     window.joinRoom = function() {
-        const input = document.getElementById('joinCodeInput').value.trim();
-        if(input) connectToHost(input);
+        const input = document.getElementById('joinCodeInput').value.trim().toUpperCase();
+        if(input.length > 0) {
+            roomId = input;
+            initMQTT();
+        }
     };
 
-    window.copyRoomLink = function() {
-        navigator.clipboard.writeText(myId).then(() => {
-            document.getElementById('linkCopiedModal').classList.add('active');
+    window.joinSaved = function() {
+        roomId = savedRoom;
+        initMQTT();
+    }
+
+    // 3. Initialize Connection
+    function initMQTT() {
+        // Save Room ID
+        localStorage.setItem('gameHub_mqtt_room', roomId);
+        
+        // UI Updates
+        document.getElementById('landingModal').classList.remove('active');
+        document.getElementById('roomCodeDisplay').innerText = "Room: " + roomId;
+        window.history.pushState({}, "", `?room=${roomId}`);
+
+        // Connect to Free Public Broker (EMQX)
+        // We use a secure WebSocket connection
+        client = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
+
+        client.on('connect', () => {
+            document.getElementById('statusDot').classList.add('connected');
+            // Subscribe to this room's channel
+            client.subscribe(`gamenighthub/${roomId}/#`);
+            
+            // Ask for current state (Sync)
+            publish('REQUEST_SYNC', {}); 
         });
-    };
 
-    // --- GAME LOGIC ---
-    function saveLocal() {
-        if(isHost) localStorage.setItem('gameHub_local_v8', JSON.stringify(games));
-        renderList();
-        drawWheel();
+        client.on('message', (topic, message) => {
+            const payload = JSON.parse(message.toString());
+            handleMessage(payload);
+        });
     }
 
-    // Update List & Broadcast
-    function updateGames(newGames) {
-        games = newGames;
-        saveLocal();
-        sendUpdate('SYNC_LIST', games);
+    // 4. Message Handling
+    function publish(type, data) {
+        if(!client) return;
+        const payload = JSON.stringify({ type, data, sender: client.options.clientId });
+        client.publish(`gamenighthub/${roomId}`, payload);
     }
 
+    function handleMessage(payload) {
+        // Don't process our own messages unless it's a sync update
+        if (payload.type === 'UPDATE_LIST') {
+            games = payload.data;
+            renderList();
+            drawWheel();
+        }
+        else if (payload.type === 'SPIN') {
+            performSpinAnimation(payload.data.rotation);
+        }
+        else if (payload.type === 'REQUEST_SYNC') {
+            // If I have games, send them to the new person
+            if(games.length > 0) {
+                publish('UPDATE_LIST', games);
+            }
+        }
+    }
+
+    // 5. Game Logic
     window.addGame = function() {
         const name = document.getElementById('inName').value.trim();
         if (!name) return;
@@ -378,39 +342,48 @@
             modes = modesStr.split(',').map(m => { return { name: m.trim(), active: true }; }).filter(m => m.name !== '');
         }
         
+        // Add locally then broadcast
         games.push({ id: Date.now(), name: name, category: cat, modes: modes, active: true });
         
         document.getElementById('inName').value = '';
         document.getElementById('inModes').value = '';
         
-        updateGames(games);
+        publish('UPDATE_LIST', games);
     }
 
     window.toggleGame = function(id) {
         const g = games.find(x => x.id == id);
-        if(g) { g.active = !g.active; updateGames(games); }
+        if(g) { g.active = !g.active; publish('UPDATE_LIST', games); }
     }
 
     window.toggleMode = function(id, mIdx) {
         const g = games.find(x => x.id == id);
         if(g && g.modes[mIdx]) {
             g.modes[mIdx].active = !g.modes[mIdx].active;
-            updateGames(games);
+            publish('UPDATE_LIST', games);
         }
     }
 
+    // 6. Delete Logic
     let deleteId = null;
-    window.openDeleteModal = function(index) { deleteId = games[index].id; document.getElementById('deleteModal').classList.add('active'); }
+    window.openDeleteModal = function(index) { 
+        // Find ID by index in current filtered view is risky, so we find by game object if possible
+        // But since we render from 'games' array directly in renderList, index is safe if synced.
+        // Wait, 'index' in loop refers to global 'games' index? 
+        // Actually, in renderList below, we loop through 'games'. So index matches.
+        deleteId = games[index].id; 
+        document.getElementById('deleteModal').classList.add('active'); 
+    }
     window.closeModal = function() { document.getElementById('deleteModal').classList.remove('active'); }
     window.confirmDelete = function() {
         if(deleteId) {
             games = games.filter(g => g.id !== deleteId);
-            updateGames(games);
+            publish('UPDATE_LIST', games);
         }
         closeModal();
     }
 
-    // --- RENDERING (Same as before) ---
+    // 7. Rendering
     function renderList() {
         const counts = { steam: 0, roblox: 0, web: 0 };
         document.getElementById('list-steam').innerHTML = '';
@@ -474,7 +447,7 @@
         document.getElementById('count-web').innerText = counts.web;
     }
 
-    // --- WHEEL ---
+    // 8. Wheel Logic
     const canvas = document.getElementById('wheelCanvas');
     const ctx = canvas.getContext('2d');
     let currentRotation = 0;
@@ -500,14 +473,9 @@
         const spins = 4; 
         const randomDeg = Math.floor(Math.random() * 360);
         const totalDeg = (spins * 360) + randomDeg;
-        
-        // Host calculates result, everyone animates
         const newRot = currentRotation + totalDeg;
         
-        // Local animation
-        performSpinAnimation(newRot);
-        // Send to peers
-        sendUpdate('SPIN', { rotation: newRot });
+        publish('SPIN', { rotation: newRot });
     }
 
     function performSpinAnimation(targetRotation) {
@@ -547,6 +515,19 @@
         }, 2500);
     }
 
+    // Audio & Tools
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playWin() { /* Optional Audio Code */ }
+    window.copyRoomLink = function() {
+        navigator.clipboard.writeText(roomId).then(() => {
+            document.getElementById('linkCopiedModal').classList.add('active');
+        });
+    };
+
+    // Auto-Run if URL has room
+    const urlRoom = new URLSearchParams(window.location.search).get('room');
+    if(urlRoom) { roomId = urlRoom.toUpperCase(); initMQTT(); }
+
     // Dropdown Logic
     const customSelect = document.querySelector('.custom-select');
     const selectTrigger = document.querySelector('.custom-select-trigger');
@@ -568,10 +549,7 @@
         if (!customSelect.contains(e.target)) customSelect.classList.remove('open');
     });
 
-    window.onload = () => {
-        renderList();
-        drawWheel();
-    };
+    window.onload = drawWheel;
     window.onresize = drawWheel;
 </script>
 </body>
