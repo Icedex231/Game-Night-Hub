@@ -19,14 +19,13 @@
         body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; align-items: center; }
         @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-        /* ROOM BAR */
         .room-bar {
-            background: var(--primary); color: white; padding: 10px 20px; border-radius: 30px;
-            font-weight: bold; margin-bottom: 20px; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(114, 137, 218, 0.4); border: 1px solid rgba(255,255,255,0.1);
+            background: var(--primary); color: white; padding: 8px 15px; border-radius: 20px;
+            font-weight: bold; margin-bottom: 10px; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(114, 137, 218, 0.3); width: fit-content;
         }
-        .status-dot { width: 10px; height: 10px; background: #ed4245; border-radius: 50%; box-shadow: 0 0 10px #ed4245; transition: 0.3s; }
-        .status-dot.connected { background: #43b581; box-shadow: 0 0 10px #43b581; }
+        .status-dot { width: 10px; height: 10px; background: #ed4245; border-radius: 50%; box-shadow: 0 0 5px #ed4245; transition: 0.3s; }
+        .status-dot.connected { background: #43b581; box-shadow: 0 0 5px #43b581; }
 
         .main-title {
             font-size: 3rem; font-weight: 900; text-transform: uppercase; letter-spacing: 5px;
@@ -37,7 +36,6 @@
         .dashboard { display: grid; grid-template-columns: 1fr 380px; gap: 20px; width: 100%; max-width: 1300px; align-items: start; }
         .section-library { display: flex; flex-direction: column; gap: 15px; }
 
-        /* ADD PANEL */
         .add-panel {
             background: var(--glass); padding: 20px; border-radius: 12px; display: flex; gap: 12px;
             flex-wrap: nowrap; border: 1px solid #333; position: relative; z-index: 20; align-items: flex-end;
@@ -47,7 +45,7 @@
         .modern-input { background: var(--input-bg); border: 1px solid #40444b; color: white; padding: 12px; border-radius: 8px; font-size: 0.95rem; outline: none; width: 100%; }
         .modern-input:focus { border-color: var(--primary); }
 
-        /* CUSTOM DROPDOWN */
+        /* Custom Dropdown */
         .custom-select-wrapper { position: relative; user-select: none; width: 100%; }
         .custom-select-trigger {
             position: relative; display: flex; align-items: center; justify-content: space-between;
@@ -65,7 +63,7 @@
         
         .btn-add { background: var(--primary); color: white; border: none; width: 50px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; height: 42px; flex-shrink: 0; }
 
-        /* LAYOUTS */
+        /* Layouts */
         .desktop-view-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
         .cat-card { background: var(--glass); border: 1px solid #333; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; height: 500px; min-width: 0; }
         .cat-header { padding: 15px; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; white-space: nowrap; }
@@ -77,7 +75,7 @@
         .library-card { background: var(--glass); border: 1px solid #333; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; height: 500px; }
         .library-header { padding: 15px 20px; background: rgba(0,0,0,0.2); border-bottom: 1px solid #333; color: var(--text-dim); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; }
 
-        /* LIST ITEMS */
+        /* Items */
         .game-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; }
         .game-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 8px; }
         .game-main-row { display: flex; align-items: center; justify-content: space-between; width: 100%; }
@@ -86,7 +84,7 @@
         .cat-icon { width: 30px; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; }
         .icon-steam { color: var(--steam); } .icon-roblox { color: var(--roblox); } .icon-web { color: var(--web); }
 
-        /* EMPTY CHECKBOXES */
+        /* FIXED EMPTY CHECKBOXES */
         .custom-check { width: 20px; height: 20px; border: 2px solid #4f545c; border-radius: 4px; display: grid; place-items: center; flex-shrink: 0; background: transparent; }
         .custom-check i { opacity: 0; transform: scale(0.5); transition: 0.2s; }
         input[type="checkbox"] { display: none; }
@@ -103,7 +101,7 @@
 
         .delete-btn { background: none; border: none; color: var(--danger); opacity: 0.5; cursor: pointer; padding: 5px; font-size: 1rem; }
 
-        /* WHEEL */
+        /* WHEEL AREA */
         .section-wheel { position: sticky; top: 10px; background: #2f3136; padding: 25px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; border: 1px solid #333; z-index: 5; transform: translateZ(0); }
         .winner-box { margin-bottom: 50px; text-align: center; min-height: 80px; width: 100%; }
         .winner-label { color: var(--text-dim); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;}
@@ -212,7 +210,7 @@
 <div class="modal-overlay" id="deleteModal">
     <div class="modal-box">
         <div class="modal-title">Delete Game?</div>
-        <p class="modal-desc">This will remove it from the list.</p>
+        <p class="modal-desc">This will remove it from the room.</p>
         <div class="modal-actions">
             <button class="btn-modal btn-cancel" onclick="closeModal()">Cancel</button>
             <button class="btn-modal btn-confirm" onclick="confirmDelete()">Delete</button>
@@ -223,7 +221,7 @@
 <div class="modal-overlay" id="linkCopiedModal">
     <div class="modal-box">
         <div class="modal-title"><i class="fas fa-check-circle" style="color:var(--accent)"></i> Copied!</div>
-        <p class="modal-desc">Room ID copied to clipboard.</p>
+        <p class="modal-desc">Room ID copied. Send it to your friends!</p>
         <button class="btn-modal btn-cancel" onclick="document.getElementById('linkCopiedModal').classList.remove('active')">Okay</button>
     </div>
 </div>
@@ -240,97 +238,72 @@
         </div>
         <div id="savedRoomBtn" style="margin-top:20px; display:none;">
             <p style="font-size:0.8rem; color:#666; margin-bottom:5px;">FOUND SAVED ROOM:</p>
-            <button class="spin-btn" style="background:#2f3136; font-size:0.9rem;" onclick="joinSaved()">REJOIN LAST ROOM</button>
+            <button class="spin-btn" style="background:#2f3136; font-size:0.9rem;" onclick="joinSaved()">REJOIN PREVIOUS ROOM</button>
         </div>
     </div>
 </div>
 
 <script>
-    // --- MQTT LOGIC (Public Cloud - No API Key Needed) ---
+    // --- MQTT LOGIC (Reliable Public Broker) ---
     let client = null;
     let roomId = null;
     let games = []; // Data Store
 
-    // 1. Check for Saved Room
+    // Check LocalStorage on load
     const savedRoom = localStorage.getItem('gameHub_mqtt_room');
     if(savedRoom && !new URLSearchParams(window.location.search).get('room')) {
         document.getElementById('savedRoomBtn').style.display = 'block';
     }
 
-    // 2. Room Functions
     window.createRoom = function() {
         roomId = Math.random().toString(36).substring(2, 6).toUpperCase();
-        initMQTT();
+        connectMQTT();
     };
 
     window.joinRoom = function() {
         const input = document.getElementById('joinCodeInput').value.trim().toUpperCase();
-        if(input.length > 0) {
-            roomId = input;
-            initMQTT();
-        }
+        if(input.length > 0) { roomId = input; connectMQTT(); }
     };
 
-    window.joinSaved = function() {
-        roomId = savedRoom;
-        initMQTT();
-    }
+    window.joinSaved = function() { roomId = savedRoom; connectMQTT(); }
 
-    // 3. Initialize Connection
-    function initMQTT() {
-        // Save Room ID
+    function connectMQTT() {
         localStorage.setItem('gameHub_mqtt_room', roomId);
         
-        // UI Updates
         document.getElementById('landingModal').classList.remove('active');
         document.getElementById('roomCodeDisplay').innerText = "Room: " + roomId;
         window.history.pushState({}, "", `?room=${roomId}`);
 
-        // Connect to Free Public Broker (EMQX)
-        // We use a secure WebSocket connection
-        client = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
+        // Connect to HiveMQ Public WebSocket
+        client = mqtt.connect('wss://broker.hivemq.com:8000/mqtt');
 
         client.on('connect', () => {
             document.getElementById('statusDot').classList.add('connected');
-            // Subscribe to this room's channel
-            client.subscribe(`gamenighthub/${roomId}/#`);
-            
-            // Ask for current state (Sync)
-            publish('REQUEST_SYNC', {}); 
+            // Subscribe to unique room topic
+            client.subscribe(`gn_hub_v1/${roomId}`);
         });
 
         client.on('message', (topic, message) => {
             const payload = JSON.parse(message.toString());
-            handleMessage(payload);
+            // Sync Logic
+            if (payload.type === 'UPDATE_LIST') {
+                games = payload.data;
+                renderList();
+                drawWheel();
+            } else if (payload.type === 'SPIN') {
+                performSpinAnimation(payload.rotation);
+            }
         });
     }
 
-    // 4. Message Handling
-    function publish(type, data) {
+    function publish(type, data, retain = false) {
         if(!client) return;
-        const payload = JSON.stringify({ type, data, sender: client.options.clientId });
-        client.publish(`gamenighthub/${roomId}`, payload);
+        const payload = JSON.stringify({ type, data });
+        // RETAIN: TRUE is crucial. It means "Hold this message for new people"
+        client.publish(`gn_hub_v1/${roomId}`, payload, { retain: retain });
     }
 
-    function handleMessage(payload) {
-        // Don't process our own messages unless it's a sync update
-        if (payload.type === 'UPDATE_LIST') {
-            games = payload.data;
-            renderList();
-            drawWheel();
-        }
-        else if (payload.type === 'SPIN') {
-            performSpinAnimation(payload.data.rotation);
-        }
-        else if (payload.type === 'REQUEST_SYNC') {
-            // If I have games, send them to the new person
-            if(games.length > 0) {
-                publish('UPDATE_LIST', games);
-            }
-        }
-    }
-
-    // 5. Game Logic
+    // --- GAME ACTIONS ---
     window.addGame = function() {
         const name = document.getElementById('inName').value.trim();
         if (!name) return;
@@ -342,35 +315,28 @@
             modes = modesStr.split(',').map(m => { return { name: m.trim(), active: true }; }).filter(m => m.name !== '');
         }
         
-        // Add locally then broadcast
         games.push({ id: Date.now(), name: name, category: cat, modes: modes, active: true });
-        
         document.getElementById('inName').value = '';
         document.getElementById('inModes').value = '';
         
-        publish('UPDATE_LIST', games);
+        publish('UPDATE_LIST', games, true); // Retain list for new joiners
     }
 
     window.toggleGame = function(id) {
         const g = games.find(x => x.id == id);
-        if(g) { g.active = !g.active; publish('UPDATE_LIST', games); }
+        if(g) { g.active = !g.active; publish('UPDATE_LIST', games, true); }
     }
 
     window.toggleMode = function(id, mIdx) {
         const g = games.find(x => x.id == id);
         if(g && g.modes[mIdx]) {
             g.modes[mIdx].active = !g.modes[mIdx].active;
-            publish('UPDATE_LIST', games);
+            publish('UPDATE_LIST', games, true);
         }
     }
 
-    // 6. Delete Logic
     let deleteId = null;
     window.openDeleteModal = function(index) { 
-        // Find ID by index in current filtered view is risky, so we find by game object if possible
-        // But since we render from 'games' array directly in renderList, index is safe if synced.
-        // Wait, 'index' in loop refers to global 'games' index? 
-        // Actually, in renderList below, we loop through 'games'. So index matches.
         deleteId = games[index].id; 
         document.getElementById('deleteModal').classList.add('active'); 
     }
@@ -378,12 +344,18 @@
     window.confirmDelete = function() {
         if(deleteId) {
             games = games.filter(g => g.id !== deleteId);
-            publish('UPDATE_LIST', games);
+            publish('UPDATE_LIST', games, true);
         }
         closeModal();
     }
 
-    // 7. Rendering
+    window.copyRoomLink = function() {
+        navigator.clipboard.writeText(roomId).then(() => {
+            document.getElementById('linkCopiedModal').classList.add('active');
+        });
+    };
+
+    // --- RENDER ---
     function renderList() {
         const counts = { steam: 0, roblox: 0, web: 0 };
         document.getElementById('list-steam').innerHTML = '';
@@ -447,7 +419,7 @@
         document.getElementById('count-web').innerText = counts.web;
     }
 
-    // 8. Wheel Logic
+    // --- WHEEL ---
     const canvas = document.getElementById('wheelCanvas');
     const ctx = canvas.getContext('2d');
     let currentRotation = 0;
@@ -474,8 +446,7 @@
         const randomDeg = Math.floor(Math.random() * 360);
         const totalDeg = (spins * 360) + randomDeg;
         const newRot = currentRotation + totalDeg;
-        
-        publish('SPIN', { rotation: newRot });
+        publish('SPIN', { rotation: newRot }, true);
     }
 
     function performSpinAnimation(targetRotation) {
@@ -515,20 +486,11 @@
         }, 2500);
     }
 
-    // Audio & Tools
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playWin() { /* Optional Audio Code */ }
-    window.copyRoomLink = function() {
-        navigator.clipboard.writeText(roomId).then(() => {
-            document.getElementById('linkCopiedModal').classList.add('active');
-        });
-    };
-
     // Auto-Run if URL has room
     const urlRoom = new URLSearchParams(window.location.search).get('room');
-    if(urlRoom) { roomId = urlRoom.toUpperCase(); initMQTT(); }
+    if(urlRoom) { roomId = urlRoom.toUpperCase(); connectMQTT(); }
 
-    // Dropdown Logic
+    // Dropdown
     const customSelect = document.querySelector('.custom-select');
     const selectTrigger = document.querySelector('.custom-select-trigger');
     const triggerText = document.getElementById('catTriggerText');
@@ -549,7 +511,7 @@
         if (!customSelect.contains(e.target)) customSelect.classList.remove('open');
     });
 
-    window.onload = drawWheel;
+    window.onload = () => { renderList(); drawWheel(); };
     window.onresize = drawWheel;
 </script>
 </body>
